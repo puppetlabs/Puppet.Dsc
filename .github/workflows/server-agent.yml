@@ -1,0 +1,98 @@
+name: Server-Agent
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: powershell
+
+jobs:
+  Server-Agent:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2019] #, windows-2016]
+    steps:
+      - uses: actions/checkout@v2
+      - name: PSVersion Table
+        run: $psversiontable
+      - name: Run Install Script
+        run: |
+          $ErrorActionPreference = "Stop"
+          & .\extras\install.ps1 -Full -Verbose
+          if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
+      - name: Setup Bundle Environment
+        run: |
+          Move-Item -Path './spec/Gemfile' -Destination './Gemfile'
+          Move-Item -Path './spec/Rakefile' -Destination './Rakefile'
+          Move-Item -Path './spec/.fixtures.yml' -Destination './.fixtures.yml'
+          gem install bundler
+          bundle config set --local path './'
+          echo ::group::=== Bundle Install ===
+            bundle install --gemfile ./Gemfile
+          echo ::endgroup::
+          bundle exec rake spec_prep
+          Move-Item -Path './spec/puppetdschelper' -Destination './spec/fixtures/modules/puppetdschelper'
+      - name: Provision
+        run: |
+          echo ::group::=== Puppet Task Show ===
+            bundle exec bolt task show --modulepath ./spec/fixtures/modules/
+          echo ::endgroup::
+          bundle exec bolt task run provision::provision_service --modulepath ./spec/fixtures/modules/ --target localhost action=provision platform=rhel-7 'vars={"role": "server"}'
+          bundle exec bolt task run provision::provision_service --modulepath ./spec/fixtures/modules/ --target localhost action=provision platform=windows-2016 'vars={"role": "agent"}'
+          bundle exec bolt task run provision::provision_service --modulepath ./spec/fixtures/modules/ --target localhost action=provision platform=windows-2019-core 'vars={"role": "agent"}'
+          echo ::group::=== LITMUS INVENTORY ===
+            type ./spec/fixtures/litmus_inventory.yaml
+          echo ::endgroup::
+          Start-Sleep -s 30
+      # - uses: nick-invision/retry@v2
+      #   id: Connection Test
+      #   continue_on_error: true
+      #   with:
+      #     timeout_minutes: 1
+      #     max_attempts: 3
+      #     command: BOLT_GEM=true bundle exec bolt run_command('echo') --targets all --inventory_file ./spec/fixtures/litmus_inventory.yaml
+      - name: Machine Setup
+        run: |
+          echo ::group::=== Puppet Plan Show ===
+            bundle exec bolt plan show --modulepath ./spec/fixtures/modules/
+          echo ::endgroup::
+          bundle exec bolt plan run provision::puppetserver_setup --modulepath ./spec/fixtures/modules/ --inventory spec/fixtures/litmus_inventory.yaml
+          bundle exec bolt plan run provision::agents_setup --modulepath ./spec/fixtures/modules/ --inventory spec/fixtures/litmus_inventory.yaml
+      - name: Generate Module
+        run: |
+          $ErrorActionPreference = "Stop"
+          'Reloading Path to pick up installed software'
+          Import-Module C:\ProgramData\chocolatey\helpers\chocolateyProfile.psm1
+          Update-SessionEnvironment
+          Get-Command Puppet, PDK
+          Import-Module ./src/Puppet.Dsc.psd1
+          $verbosepreference = 'continue'
+          $modulepath = New-PuppetDscModule -powershellmodulename powershellget -puppetmoduleauthor dsc -powershellmoduleversion 2.2.5 -passthru |
+            Select-Object -expandproperty fullname
+          $exportpuppetmodule = Export-PuppetModule -puppetmodulefolderpath $modulepath -exportfolderpath ./pkg -force -passthru
+          echo 'Module Path'
+          echo $modulepath
+          echo 'Export Path'
+          echo $exportpuppetmodule
+      - name: Run Tests
+        run: |
+          echo ::group::=== Puppet Plan Show ===
+            type ./spec/fixtures/litmus_inventory.yaml
+          echo ::endgroup::
+          bundle exec bolt plan run puppetdschelper::run_tests --modulepath ./spec/fixtures/modules/ --inventory spec/fixtures/litmus_inventory.yaml
+      # - name: Start SSH session
+      #   uses: luchihoratiu/debug-via-ssh@main
+      #   with:
+      #     SSH_PASS: ${{ secrets.SSH_PASS }}
+      #     NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+      # - name: Remove test environment
+      #   continue-on-error: true
+      #   run: bundle exec rake 'litmus:tear_down'

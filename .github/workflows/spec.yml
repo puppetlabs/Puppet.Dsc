@@ -1,97 +1,97 @@
-name: CI
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  schedule:
-    - cron: "0 0 * * *"
-  workflow_dispatch:
+# name: CI
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
+#     branches: [main]
+#   schedule:
+#     - cron: "0 0 * * *"
+#   workflow_dispatch:
 
-defaults:
-  run:
-    shell: powershell
+# defaults:
+#   run:
+#     shell: powershell
 
-jobs:
-  Spec:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-2016, windows-2019]
-        tag: [General, Unit]
-        include:
-          - tag: General
-            results_file: General.Results.xml
-          - tag: Unit
-            results_file: Unit.Results.xml
-    steps:
-      - uses: actions/checkout@v2
-      - name: PSVersion Table
-        run: $psversiontable
-      - name: Install
-        run: |
-          $ErrorActionPreference = "Stop"
-          & .\extras\install.ps1 -Verbose
-          if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
-      - name: Run Tests
-        run: |
-          $ErrorActionPreference = "Stop"
-          $ResultsPath = "${{ matrix.results_file }}"
-          $TestPath = @(
-            (Resolve-Path .\src\functions)
-            (Resolve-Path .\src\internal\functions)
-            (Resolve-Path .\src\tests\general)
-          )
-          $Results = .\extras\invoke_tests.ps1 -TestPath $TestPath -ResultsPath $ResultsPath -Tag ${{ matrix.tag }}
-          if ($Results.FailedCount -gt 0) {
-            throw "$($Results.FailedCount) tests failed."
-          }
+# jobs:
+#   Spec:
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         os: [windows-2016, windows-2019]
+#         tag: [General, Unit]
+#         include:
+#           - tag: General
+#             results_file: General.Results.xml
+#           - tag: Unit
+#             results_file: Unit.Results.xml
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: PSVersion Table
+#         run: $psversiontable
+#       - name: Install
+#         run: |
+#           $ErrorActionPreference = "Stop"
+#           & .\extras\install.ps1 -Verbose
+#           if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
+#       - name: Run Tests
+#         run: |
+#           $ErrorActionPreference = "Stop"
+#           $ResultsPath = "${{ matrix.results_file }}"
+#           $TestPath = @(
+#             (Resolve-Path .\src\functions)
+#             (Resolve-Path .\src\internal\functions)
+#             (Resolve-Path .\src\tests\general)
+#           )
+#           $Results = .\extras\invoke_tests.ps1 -TestPath $TestPath -ResultsPath $ResultsPath -Tag ${{ matrix.tag }}
+#           if ($Results.FailedCount -gt 0) {
+#             throw "$($Results.FailedCount) tests failed."
+#           }
 
-  Acceptance:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-2016, windows-2019]
-        tag: [Basic, MultiModule]
-        pwshlib_source: [forge, git]
-        include:
-          - pwshlib_source: forge
-            pwshlib_repo: "puppetlabs/pwshlib"
-            pwshlib_ref: "latest" # Change to a specific version if desired
-            results_file: Acceptance.Forge.Results.xml
-          - pwshlib_source: git
-            pwshlib_repo: "git://github.com/puppetlabs/ruby-pwsh.git" # Change to another fork if desired
-            pwshlib_ref: main # Change to another branch if desired
-            results_file: Acceptance.Git.Results.xml
-    steps:
-      - uses: actions/checkout@v2
-      - name: PSVersion Table
-        run: $psversiontable
-      - name: Install
-        run: |
-          $ErrorActionPreference = "Stop"
-          & .\extras\install.ps1 -Full -Verbose
-          if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
-      - name: Run Tests
-        run: |
-          $ErrorActionPreference = "Stop"
-          'Reloading Path to pick up installed software'
-          Import-Module C:\ProgramData\chocolatey\helpers\chocolateyProfile.psm1
-          Update-SessionEnvironment
-          Get-Command Puppet, PDK
-          $TestParameters = @{
-            TestPath         = @((Resolve-Path .\acceptance))
-            ResultsPath      = "${{ matrix.results_file }}"
-            Tag              = "${{ matrix.tag }}"
-            PwshLibSource    = "${{ matrix.pwshlib_source }}"
-            PwshLibRepo      = "${{ matrix.pwshlib_repo }}"
-            PwshLibReference = "${{ matrix.pwshlib_ref }}"
-          }
-          "Invocation Parameters: `r`n$($TestParameters | ConvertTo-Json)"
+#   Acceptance:
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         os: [windows-2016, windows-2019]
+#         tag: [Basic, MultiModule]
+#         pwshlib_source: [forge, git]
+#         include:
+#           - pwshlib_source: forge
+#             pwshlib_repo: "puppetlabs/pwshlib"
+#             pwshlib_ref: "latest" # Change to a specific version if desired
+#             results_file: Acceptance.Forge.Results.xml
+#           - pwshlib_source: git
+#             pwshlib_repo: "git://github.com/puppetlabs/ruby-pwsh.git" # Change to another fork if desired
+#             pwshlib_ref: main # Change to another branch if desired
+#             results_file: Acceptance.Git.Results.xml
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: PSVersion Table
+#         run: $psversiontable
+#       - name: Install
+#         run: |
+#           $ErrorActionPreference = "Stop"
+#           & .\extras\install.ps1 -Full -Verbose
+#           if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
+#       - name: Run Tests
+#         run: |
+#           $ErrorActionPreference = "Stop"
+#           'Reloading Path to pick up installed software'
+#           Import-Module C:\ProgramData\chocolatey\helpers\chocolateyProfile.psm1
+#           Update-SessionEnvironment
+#           Get-Command Puppet, PDK
+#           $TestParameters = @{
+#             TestPath         = @((Resolve-Path .\acceptance))
+#             ResultsPath      = "${{ matrix.results_file }}"
+#             Tag              = "${{ matrix.tag }}"
+#             PwshLibSource    = "${{ matrix.pwshlib_source }}"
+#             PwshLibRepo      = "${{ matrix.pwshlib_repo }}"
+#             PwshLibReference = "${{ matrix.pwshlib_ref }}"
+#           }
+#           "Invocation Parameters: `r`n$($TestParameters | ConvertTo-Json)"
 
-          $Results = .\extras\invoke_tests.ps1 @TestParameters
-          if ($Results.FailedCount -gt 0) {
-            throw "$($Results.FailedCount) tests failed."
-          }
+#           $Results = .\extras\invoke_tests.ps1 @TestParameters
+#           if ($Results.FailedCount -gt 0) {
+#             throw "$($Results.FailedCount) tests failed."
+#           }

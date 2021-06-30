@@ -1,0 +1,5 @@
+---
+name: puppetdschelper
+plans:
+- puppetdschelper::create_site_pp
+modules: []

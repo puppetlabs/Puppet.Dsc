@@ -1,0 +1,2 @@
+2021-07-21T17:12:51.699752 INFO   [main] [Bolt::CLI] Loaded project from '/Users/david.swan/Github/Puppet.Dsc'
+2021-07-21T17:12:55.247127 DEBUG  [main] [Bolt::PAL] Loading modules from /opt/puppetlabs/bolt/lib/ruby/gems/2.5.0/gems/bolt-2.40.2/bolt-modules:/Users/david.swan/Github/Puppet.Dsc/spec/fixtures/modules:/Users/david.swan/Github/Puppet.Dsc/.modules:/opt/puppetlabs/bolt/lib/ruby/gems/2.5.0/gems/bolt-2.40.2/modules
