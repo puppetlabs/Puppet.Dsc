@@ -10,6 +10,11 @@ $PrivateFunctionsToLoad = @(
   'Invoke-PdkCommand'
   'Out-Utf8File'
   'ConvertTo-UnescapedJson'
+  'ConvertTo-VersionBuild'
+  'ConvertFrom-VersionBuild'
+  'ConvertTo-StandardizedVersionString'
+  'Get-LatestBuild'
+  'Set-PuppetModuleVersion'
 )
 Get-ChildItem -Path $PrivateFunctionsFolder |
   Where-Object -FilterScript {
@@ -18,65 +23,6 @@ Get-ChildItem -Path $PrivateFunctionsFolder |
   ForEach-Object -Process {
     . $_.FullName
   }
-
-Function ConvertTo-VersionBuild {
-  [CmdletBinding()]
-  param (
-    [Parameter()]
-    [String[]]
-    $Version
-  )
-
-  Begin { }
-  Process {
-    $Version | Sort-Object -Descending | ForEach-Object -Process {
-      [pscustomobject]@{
-        Version = $_.substring(0, ($_.length - 2))
-        Build   = [int]([string]$_[-1])
-      }
-    }
-  }
-  End { }
-}
-
-Function Get-LatestBuild {
-  [CmdletBinding()]
-  param (
-    [Parameter()]
-    [String[]]
-    $Version
-  )
-  Begin { }
-  Process {
-    $VersionAndBuild = ConvertTo-VersionBuild -Version $Version
-    $VersionAndBuild.version |
-      Select-Object -Unique |
-      ForEach-Object -Process {
-        $VersionAndBuild |
-          Where-Object -Property Version -EQ $_ |
-          Sort-Object -Property Build -Descending |
-          Select-Object -First 1
-        }
-  }
-  End { }
-}
-
-Function ConvertFrom-VersionBuild {
-  [CmdletBinding()]
-  param (
-    [Parameter(ValueFromPipeline = $true)]
-    [object[]]
-    $VersionBuild
-  )
-
-  Begin { }
-  Process {
-    $VersionBuild | ForEach-Object -Process {
-      "$($_.Version)-$($_.Build)"
-    }
-  }
-  End { }
-}
 
 Function Get-ForgeModuleInfo {
   [CmdletBinding()]
@@ -231,25 +177,6 @@ Function Publish-PuppetDscModule {
   }
 }
 
-Function Set-PuppetModuleVersion {
-  [CmdletBinding()]
-  Param (
-    [string]$FolderToExecuteIn,
-    [string]$Version
-  )
-
-  Begin { }
-
-  Process {
-    $PuppetMetadataJsonPath = Join-Path -Path $FolderToExecuteIn -ChildPath 'metadata.json' | Resolve-Path
-    $PuppetMetadata = Get-Content -Path $PuppetMetadataJsonPath -Raw | ConvertFrom-Json
-    $PuppetMetadata.version = $Version
-    $PuppetMetadataJson = ConvertTo-UnescapedJson -InputObject $PuppetMetadata -Depth 10
-    Out-Utf8File -Path $PuppetMetadataJsonPath -InputObject $PuppetMetadataJson
-  }
-
-  End { }
-}
 Function Update-ForgeDscModule {
   [CmdletBinding()]
   param (
@@ -349,40 +276,6 @@ Function Get-PowerShellDscModule {
         Name     = $NameToSearch
         Releases = $Response.Version
       }
-    }
-  }
-  End { }
-}
-
-Function ConvertTo-StandardizedVersionString {
-  [CmdletBinding()]
-  param (
-    [Parameter(ValueFromPipeline = $true)]
-    [version[]]
-    $Version
-  )
-  Begin { }
-  Process {
-    ForEach ($VersionToProcess in $Version) {
-      $StandardizedVersion = [PSCustomObject]@{
-        Major    = $VersionToProcess.Major
-        Minor    = $VersionToProcess.Minor
-        Build    = $VersionToProcess.Build
-        Revision = $VersionToProcess.Revision
-      }
-      if ($StandardizedVersion.Minor -eq -1) {
-        $StandardizedVersion.Minor = 0
-      }
-      if ($StandardizedVersion.Major -eq -1) {
-        $StandardizedVersion.Major = 0
-      }
-      if ($StandardizedVersion.Build -eq -1) {
-        $StandardizedVersion.Build = 0
-      }
-      if ($StandardizedVersion.Revision -eq -1) {
-        $StandardizedVersion.Revision = 0
-      }
-      "$($StandardizedVersion.Major).$($StandardizedVersion.Minor).$($StandardizedVersion.Build).$($StandardizedVersion.Revision)"
     }
   }
   End { }
