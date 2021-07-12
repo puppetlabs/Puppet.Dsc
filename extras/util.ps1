@@ -24,66 +24,6 @@ Get-ChildItem -Path $PrivateFunctionsFolder |
     . $_.FullName
   }
 
-Function Get-ForgeModuleInfo {
-  [CmdletBinding()]
-  param (
-    [Parameter()]
-    [string[]]
-    $Name,
-    [Parameter()]
-    [datetime]
-    $Until,
-    [Parameter()]
-    [datetime]
-    $Since,
-    [Parameter()]
-    [string[]]
-    $SkipVersion
-  )
-
-  Begin {
-    $UriBase = 'https://forgeapi.puppet.com/v3/modules/dsc-'
-    $ModuleSearchParameters = @{
-      Method          = 'Get'
-      UseBasicParsing = $True
-      Headers         = @{
-        Authotization = "Bearer $ENV:FORGE_TOKEN"
-      }
-    }
-  }
-  Process {
-    foreach ($Module in $Name) {
-      $ModuleSearchParameters.Uri = $UriBase + (Get-PuppetizedModuleName $Module)
-      $Result = Invoke-RestMethod @ModuleSearchParameters
-      # Filter Releases:
-      if ($null -ne $Until) {
-        $Result.releases = $Result.releases | Where-Object -FilterScript {
-          [datetime]$_.created_at -lt $Until
-        }
-      }
-      if ($null -ne $Since) {
-        $Result.releases = $Result.releases | Where-Object -FilterScript {
-          [datetime]$_.created_at -gt $Since
-        }
-      }
-      If ($null -ne $SkipVersion) {
-        $Result.releases = $Result.releases | Where-Object -FilterScript {
-          $null = $_.version -match '(?<Version>\d+\.\d+\.\d+-\d+)-(?<Build>\d+$)'
-          $ReleaseVersion = $Matches.Version
-          $ReleaseVersion -notin $SkipVersion
-        }
-      }
-
-      [PSCustomObject]@{
-        Name                 = $Result.name
-        Releases             = $Result.releases.version
-        PowerShellModuleInfo = $Result.current_release.metadata.dsc_module_metadata
-      }
-    }
-  }
-  End { }
-}
-
 Function Get-ForgeDscModules {
   [CmdletBinding()]
   param (
