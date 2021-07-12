@@ -255,32 +255,6 @@ Function Update-ForgeDscModule {
   End { }
 }
 
-Function Get-PowerShellDscModule {
-  [CmdletBinding()]
-  param (
-    [Parameter()]
-    [string[]]
-    $Name
-  )
-
-  Begin { }
-  Process {
-    If ($null -eq $Name) {
-      $Name = Find-Module -DscResource * -Name * |
-        Select-Object -ExpandProperty Name
-    }
-
-    ForEach ($NameToSearch in $Name) {
-      $Response = Find-Module -Name $NameToSearch -AllVersions
-      [PSCustomObject]@{
-        Name     = $NameToSearch
-        Releases = $Response.Version
-      }
-    }
-  }
-  End { }
-}
-
 Function Get-UnreleasedDscModuleVersion {
   [CmdletBinding()]
   param (
