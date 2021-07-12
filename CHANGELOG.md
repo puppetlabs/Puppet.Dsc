@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Concept documentation for how Puppet invokes Puppetized DSC Resources in the `about_Puppetized_module_invocation` about help topic ([#74](https://github.com/puppetlabs/Puppet.Dsc/issues/74))
+- `Get-PowerShellDscModule` function for discovering Puppetizable PowerShell modules in a PowerShell repository ([#68](https://github.com/puppetlabs/ruby-pwsh/issues/68))
 
 ### Fixed
 
