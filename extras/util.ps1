@@ -24,23 +24,6 @@ Get-ChildItem -Path $PrivateFunctionsFolder |
     . $_.FullName
   }
 
-Function Export-PuppetModule {
-  [CmdletBinding()]
-  Param (
-    [string]$FolderToExecuteIn,
-    [string]$ExportFolder
-  )
-
-  If ([string]::IsNullOrEmpty($ExportFolder)) {
-    $Command = 'pdk build'
-  } Else {
-    $Command = "pdk build --target-dir $ExportFolder"
-  }
-  Invoke-PdkCommand -Path $FolderToExecuteIn -Command $Command -SuccessFilterScript {
-    $_ -match 'has completed successfully. Built package can be found here'
-  }
-}
-
 Function Publish-PuppetDscModule {
   [CmdletBinding()]
   Param (
