@@ -45,6 +45,7 @@
   # Functions to export from this module
   FunctionsToExport = @(
     'ConvertTo-PuppetResourceApi'
+    'Export-PuppetModule'
     'Get-ForgeModuleInfo'
     'Get-PowerShellDscModule'
     'Get-PuppetizedModuleName'
