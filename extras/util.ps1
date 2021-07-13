@@ -24,63 +24,6 @@ Get-ChildItem -Path $PrivateFunctionsFolder |
     . $_.FullName
   }
 
-Function Get-ForgeDscModules {
-  [CmdletBinding()]
-  param (
-    [Parameter()]
-    [datetime]
-    $Until,
-    [Parameter()]
-    [datetime]
-    $Since
-  )
-
-  Begin {
-    $PaginationBump = 5
-    $ForgeSearchParameters = @{
-      Method          = 'Get'
-      UseBasicParsing = $True
-      Uri             = 'https://forgeapi.puppet.com/v3/modules'
-      Headers         = @{
-        Authotization = "Bearer $ENV:FORGE_TOKEN"
-      }
-      Body            = @{
-        owner  = 'dsc'
-        limit  = $PaginationBump
-        offset = 0
-      }
-    }
-    $Results = [System.Collections.ArrayList]::new()
-  }
-
-  Process {
-    do {
-      $Response = Invoke-RestMethod @ForgeSearchParameters
-      ForEach ($Result in $Response.results) {
-        # Filter Releases:
-        if ($null -ne $Until) {
-          $Result.releases = $Result.releases | Where-Object -FilterScript {
-            [datetime]$_.created_at -lt $Until
-          }
-        }
-        if ($null -ne $Since) {
-          $Result.releases = $Result.releases | Where-Object -FilterScript {
-            [datetime]$_.created_at -gt $Since
-          }
-        }
-        $null = $Results.Add([PSCustomObject]@{
-            Name                 = $Result.name
-            Releases             = $Result.releases.version
-            PowerShellModuleInfo = $Result.current_release.metadata.dsc_module_metadata
-          })
-      }
-      $ForgeSearchParameters.body.offset += $PaginationBump
-    } until ($null -eq $Response.Pagination.Next)
-    $Results
-  }
-  End { }
-}
-
 Function Export-PuppetModule {
   [CmdletBinding()]
   Param (
