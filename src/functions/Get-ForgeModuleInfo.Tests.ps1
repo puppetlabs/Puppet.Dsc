@@ -77,7 +77,7 @@ Describe 'Get-ForgeModuleInfo' -Tag 'Unit' {
         }
       }
 
-      It 'searches the namespace for all modules' -Pending {
+      It 'searches the namespace for all modules' {
         $Result = Get-ForgeModuleInfo -PaginationBump 1
         $Result.Count | Should -Be 3
         $Result[0].Name | Should -Be 'foo'
