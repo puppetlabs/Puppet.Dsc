@@ -24,25 +24,6 @@ Get-ChildItem -Path $PrivateFunctionsFolder |
     . $_.FullName
   }
 
-Function Publish-PuppetDscModule {
-  [CmdletBinding()]
-  Param (
-    [string]$FolderToExecuteIn,
-    [string]$PackagedModulePath
-  )
-  If ([string]::IsNullOrEmpty($PackagedModulePath)) {
-    Write-Verbose "Publishing from $FolderToExecuteIn"
-    $Command = "pdk release publish --forge-token $env:FORGE_TOKEN"
-  } Else {
-    Write-Verbose "Publishing $PackagedModulePath"
-    $Command = "pdk release publish --forge-token $env:FORGE_TOKEN --file $PackagedModulePath"
-  }
-
-  Invoke-PdkCommand -Path $FolderToExecuteIn -Command $Command -SuccessFilterScript {
-    $_ -match 'Publish to Forge was successful'
-  }
-}
-
 Function Update-ForgeDscModule {
   [CmdletBinding()]
   param (
