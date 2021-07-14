@@ -1,0 +1,82 @@
+# TODO:
+# - Set to run hourly
+# - Only run most recent 10
+# - Enable parameterized workflow
+# - Install the PDK for the publish step
+# - Remove on pull_request
+
+name: Puppetize
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+  pull_request:
+
+defaults:
+  run:
+    shell: powershell
+
+jobs:
+  setup_matrix:
+    name: "Setup Matrix"
+    runs-on: windows-latest
+    outputs:
+      publish_matrix: ${{ steps.build-matrix.outputs.publish_matrix }}
+    steps:
+      - name: PSVersion Table
+        run: $psversiontable
+      - name: Install PowerShell Prerequisites
+        run: |
+          Import-Module PowerShellGet
+          $VerbosePreference = 'Continue'
+          Install-Module -Name Puppet.Dsc -MinimumVersion 1.0.0 -Scope AllUsers -Force
+      - name: Build Matrix
+        id: build-matrix
+        run: |
+          $VerbosePreference = 'Continue'
+          Import-Module Puppet.Dsc -Verbose
+          # [System.Collections.Generic.List[string]]$Results = @()
+          [System.Collections.Generic.List[string]]$Results = Get-UnpuppetizedDscModuleVersion -ForgeNameSpace dsc |
+            Select-Object -First 1 -ExpandProperty Name
+          echo "Modules to Build & Release:"
+          ($Results | ForEach-Object -Process { "`t$_" }) -join "`r`n"
+          If ($Results.Count -eq 0) {
+            echo "Empty matrix!"
+            echo "::set-output name=publish_matrix::{}"
+          } Else {
+            $Matrix = @{ module_name = $Results }
+            echo "Build Matrix:`r`n$($Matrix | ConvertTo-Json)"
+            echo "::set-output name=publish_matrix::$($Matrix | ConvertTo-Json -Compress)"
+          }
+  publish_unreleased_versions:
+    name: "Publish Unreleased Versions for ${{ matrix.module_name }}"
+    needs:
+      - setup_matrix
+    if: ${{ needs.setup_matrix.outputs.publish_matrix != '{}' }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.setup_matrix.outputs.publish_matrix) }}
+    steps:
+      - name: PSVersion Table
+        run: $psversiontable
+      - name: Install Prerequisites
+        run: |
+          choco install pdk -y
+          Import-Module C:\ProgramData\chocolatey\helpers\chocolateyProfile.psm1
+          Update-SessionEnvironment
+          Install-Module -Name Puppet.Dsc -MinimumVersion 1.0.0 -Scope AllUsers -Force
+          Get-Command PDK, Publish-NewDscModuleVersion
+      - name: Configure WinRM
+        run: |
+          Write-Host 'Ensuring WinRM is configured for DSC'
+          Get-ChildItem WSMan:\localhost\Listener\ -OutVariable Listeners | Format-List * -Force
+          $HTTPListener = $Listeners | Where-Object -FilterScript { $_.Keys.Contains('Transport=HTTP') }
+          If ($HTTPListener.Count -eq 0) {
+            winrm create winrm/config/Listener?Address=*+Transport=HTTP
+            winrm e winrm/config/listener
+          }
+      - name: Publish Unreleased Versions
+        run: |
+          $VerbosePreference = 'Continue'
+          Publish-NewDscModuleVersion -ForgeNameSpace dsc -Name ${{ matrix.module_name }} -ForgeToken "${{ secrets.FORGE_API_TOKEN }}"
