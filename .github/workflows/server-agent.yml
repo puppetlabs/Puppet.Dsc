@@ -1,0 +1,66 @@
+name: Server-Agent
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: powershell
+
+jobs:
+  Server-Agent:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2019] #, windows-2016]
+    steps:
+      - uses: actions/checkout@v2
+      - name: PSVersion Table
+        run: $psversiontable
+      - name: Run Install Script
+        run: |
+          $ErrorActionPreference = "Stop"
+          & .\extras\install.ps1 -Verbose
+          if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
+      # - name: Setup Bolt Removed because bolt is packaged into the default gems
+      #   run: |
+      #     choco install puppet-bolt --yes --no-progress
+      #     Import-Module C:\ProgramData\chocolatey\helpers\chocolateyProfile.psm1
+      #     Update-SessionEnvironment
+      #     Import-Module PuppetBolt
+      - name: Setup Bundle Environment
+        run: |
+          Move-Item -Path './spec/Gemfile' -Destination './Gemfile'
+          Move-Item -Path './spec/Rakefile' -Destination './Rakefile'
+          Move-Item -Path './spec/.fixtures.yml' -Destination './.fixtures.yml'
+          Move-Item -Path './spec/plans' -Destination './plans'
+          gem install bundler
+          bundle config set --local path './'
+          echo ::group::=== Bundle Install ===
+            bundle install --gemfile ./Gemfile
+          echo ::endgroup::
+      - name: Provision
+        run: |
+          bundle exec rake 'litmus:provision[provision::provision_service,rhel-8,roles:server]'
+          bundle exec rake 'litmus:provision[provision::provision_service,windows-2016,roles:agent]'
+          bundle exec rake 'litmus:provision[provision::provision_service,windows-2019,roles:agent]'
+
+          echo ::group::=== LITMUS INVENTORY ===
+            type ./spec/fixtures/litmus_inventory.yaml
+          echo ::endgroup::
+      - name: Machine Setup
+        run: |
+          echo ::group::=== Puppet Plans ===
+            BOLT_GEM=true bundle exec bolt plan show --modulepath ./spec/fixtures/modules/
+          echo ::endgroup::
+      # - name: Start SSH session
+      #   uses: luchihoratiu/debug-via-ssh@main
+      #   with:
+      #     SSH_PASS: ${{ secrets.SSH_PASS }}
+      #     NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}

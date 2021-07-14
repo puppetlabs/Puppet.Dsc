@@ -5,3 +5,6 @@ import
 Puppet.Dsc/
 docs/*
 !docs/about_*
+.bundle/
+spec/fixtures/
+request.json
