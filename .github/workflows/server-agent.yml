@@ -28,7 +28,7 @@ jobs:
           $ErrorActionPreference = "Stop"
           & .\extras\install.ps1 -Verbose
           if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
-      # - name: Setup Bolt
+      # - name: Setup Bolt Removed because bolt is packaged into the default gems
       #   run: |
       #     choco install puppet-bolt --yes --no-progress
       #     Import-Module C:\ProgramData\chocolatey\helpers\chocolateyProfile.psm1
@@ -43,16 +43,22 @@ jobs:
           gem install bundler
           bundle config set --local path './'
           echo ::group::=== Bundle Install ===
-          bundle install --gemfile ./Gemfile
+            bundle install --gemfile ./Gemfile
           echo ::endgroup::
       - name: Provision
         run: |
-            Get-ChildItem ./plans
-            bundle exec bolt plan show --modulepath ./spec/fixtures/modules/
-        # bundle exec bolt --modulepath spec/fixtures/modules plan run puppetdsc::provision_machines --verbose
-        # echo ::group::=== LITMUS INVENTORY ===
-        # type ./spec/fixtures/litmus_inventory.yaml
-        # echo ::endgroup::
+          bundle exec rake 'litmus:provision[provision::provision_service,rhel-8,roles:server]'
+          bundle exec rake 'litmus:provision[provision::provision_service,windows-2016,roles:agent]'
+          bundle exec rake 'litmus:provision[provision::provision_service,windows-2019,roles:agent]'
+
+          echo ::group::=== LITMUS INVENTORY ===
+            type ./spec/fixtures/litmus_inventory.yaml
+          echo ::endgroup::
+      - name: Machine Setup
+        run: |
+          echo ::group::=== Puppet Plans ===
+            BOLT_GEM=true bundle exec bolt plan show --modulepath ./spec/fixtures/modules/
+          echo ::endgroup::
       # - name: Start SSH session
       #   uses: luchihoratiu/debug-via-ssh@main
       #   with:
