@@ -8,6 +8,8 @@ Function Get-PowerShellDscModule {
   .PARAMETER Name
     The name of one or more modules to search for. If not specified, returns all modules
     with DSC Resources.
+  .PARAMETER Repository
+    The PowerShell repository to search; defaults to the PowerShell Gallery
   .EXAMPLE
     Get-PowerShellDscModule
     Searches the PowerShell Gallery for every module with DSC Resources and returns every
@@ -21,23 +23,28 @@ Function Get-PowerShellDscModule {
 
   [CmdletBinding()]
   param (
-    [Parameter()]
-    [string[]]
-    $Name
+    [string[]]$Name,
+    [string]$Repository = 'PSGallery'
   )
 
   Begin { }
   Process {
     If ($null -eq $Name) {
-      $Name = Find-Module -DscResource * -Name * |
+      Write-PSFMessage -Level Verbose -Message "Searching the $Repository for all modules with DSC Resources"
+      $Name = Find-Module -Repository $Repository -DscResource * -Name * |
         Select-Object -ExpandProperty Name
     }
 
     ForEach ($NameToSearch in $Name) {
-      $Response = Find-Module -Name $NameToSearch -AllVersions
-      [PSCustomObject]@{
-        Name     = $NameToSearch
-        Releases = $Response.Version
+      try {
+        Write-PSFMessage -Level Verbose -Message "Searching the $Repository for all versions of the $NameToSearch module with DSC Resources"
+        $Response = Find-Module -Repository $Repository -DscResource * -Name $NameToSearch -AllVersions -ErrorAction Stop
+        [PSCustomObject]@{
+          Name     = $NameToSearch
+          Releases = $Response.Version
+        }
+      } catch {
+        $PSCmdlet.WriteError($PSItem)
       }
     }
   }

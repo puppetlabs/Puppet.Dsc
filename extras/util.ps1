@@ -102,33 +102,6 @@ Function Update-ForgeDscModule {
   End { }
 }
 
-Function Get-UnreleasedDscModuleVersion {
-  [CmdletBinding()]
-  param (
-    [Parameter()]
-    [string[]]
-    $Name
-  )
-
-  Begin { }
-  Process {
-    $GalleryModuleInfo = Get-PowerShellDscModule -Name $Name
-    ForEach ($Module in $GalleryModuleInfo) {
-      $ForgeModuleInfo = Get-ForgeModuleInfo -Name (Get-PuppetizedModuleName -Name $Module.Name)
-      $VersionsReleasedToForge = Get-LatestBuild $ForgeModuleInfo.Releases |
-        Select-Object -ExpandProperty Version |
-        ForEach-Object -Process { $_ -replace '-', '.' }
-      $ModuleVersions = ConvertTo-StandardizedVersionString -Version $Module.Releases
-      $VersionsToRelease = $ModuleVersions | Where-Object -FilterScript { $_ -notin $VersionsReleasedToForge }
-      [PSCustomObject]@{
-        Name     = $Module.Name
-        Versions = $VersionsToRelease
-      }
-    }
-  }
-  End { }
-}
-
 Function Publish-NewDscModuleVersion {
   [CmdletBinding()]
   param (

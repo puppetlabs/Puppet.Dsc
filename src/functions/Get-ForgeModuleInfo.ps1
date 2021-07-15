@@ -78,14 +78,18 @@ Function Get-ForgeModuleInfo {
       # Return only specified modules in the forge namespace
       $UriBase = "$ForgeUri/$ForgeNameSpace-"
       foreach ($Module in $Name) {
-        $ForgeSearchParameters.Uri = "${UriBase}$(Get-PuppetizedModuleName $Module)"
-        Write-PSFMessage -Level Verbose -Message ($ForgeSearchParameters | ConvertTo-Json -Depth 5)
-        $Result = Invoke-RestMethod @ForgeSearchParameters
+        try {
+          $ForgeSearchParameters.Uri = "${UriBase}$(Get-PuppetizedModuleName $Module)"
+          Write-PSFMessage -Level Verbose -Message "Searching the forge with the following parameters:`n$($ForgeSearchParameters | ConvertTo-Json -Depth 5)"
+          $Result = Invoke-RestMethod @ForgeSearchParameters -ErrorAction Stop
 
-        [PSCustomObject]@{
-          Name                 = $Result.name
-          Releases             = $Result.releases.version
-          PowerShellModuleInfo = $Result.current_release.metadata.dsc_module_metadata
+          [PSCustomObject]@{
+            Name                 = $Result.name
+            Releases             = $Result.releases.version
+            PowerShellModuleInfo = $Result.current_release.metadata.dsc_module_metadata
+          }
+        } catch {
+          $PSCmdlet.WriteError($PSItem)
         }
       }
     }
