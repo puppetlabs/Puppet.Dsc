@@ -49,6 +49,7 @@
     'Get-ForgeModuleInfo'
     'Get-PowerShellDscModule'
     'Get-PuppetizedModuleName'
+    'Get-UnpuppetizedDscModuleVersion'
     'New-PuppetDscModule'
     'Publish-PuppetModule'
   )
