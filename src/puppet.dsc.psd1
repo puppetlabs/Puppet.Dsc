@@ -52,6 +52,7 @@
     'Get-UnpuppetizedDscModuleVersion'
     'New-PuppetDscModule'
     'Publish-PuppetModule'
+    'Update-ForgeDscModule'
   )
 
   # Cmdlets to export from this module

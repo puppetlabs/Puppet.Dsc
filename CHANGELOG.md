@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Export-PuppetModule` function to build a Puppetized PowerShell module into a packaged Puppet module ([#68](https://github.com/puppetlabs/ruby-pwsh/issues/68))
 - `Get-ForgeModuleInfo` function for retrieving releases and PowerShell metadata about Puppetized PowerShell modules on the forge ([#68](https://github.com/puppetlabs/ruby-pwsh/issues/68))
 - `Get-PowerShellDscModule` function for discovering Puppetizable PowerShell modules in a PowerShell repository ([#68](https://github.com/puppetlabs/ruby-pwsh/issues/68))
+- `Update-ForgeDscModule` function for rebuilding and publishing (with incremented Puppet build version) Puppetized DSC modules to the Forge ([#68](https://github.com/puppetlabs/ruby-pwsh/issues/68))
 
 ### Changed
 
