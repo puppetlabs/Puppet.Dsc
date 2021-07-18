@@ -5,14 +5,14 @@ Function Get-ForgeModuleInfo {
   .DESCRIPTION
     Search a Puppet forge for modules with DSC Resources, returning their name,
     every release of that module, and the module's PowerShell metadata.
+  .PARAMETER ForgeNameSpace
+    The namespace on the Forge to search for modules.
   .PARAMETER Name
     The name of the module to search for on the Forge. If left unspecified, will
     search the entire namespace for modules.
-  .PARAMETER ForgeUri
+  .PARAMETER ForgeSearchUri
     The URI to the forge api for retrieving modules; by default, the public
     Puppet forge (v3).
-  .PARAMETER ForgeNameSpace
-    The namespace on the Forge to search inside; by default, 'dsc'.
   .PARAMETER PaginationBump
     If searching a namespace for modules, indicates the number of modules to return
     in a single result set, continuing to search until no more modules are discovered.
@@ -31,14 +31,14 @@ Function Get-ForgeModuleInfo {
   [CmdletBinding(DefaultParameterSetName = 'ByNameSpace')]
   [OutputType([System.Object[]])]
   param (
-    [Parameter(ParameterSetName = 'ByName')]
+    [Parameter(ParameterSetName = 'ByName', Mandatory)]
+    [Parameter(ParameterSetName = 'ByNameSpace', Mandatory)]
+    [string]$ForgeNameSpace,
+    [Parameter(ParameterSetName = 'ByName', Mandatory)]
     [string[]]$Name,
     [Parameter(ParameterSetName = 'ByName')]
     [Parameter(ParameterSetName = 'ByNameSpace')]
-    [string]$ForgeUri = 'https://forgeapi.puppet.com/v3/modules',
-    [Parameter(ParameterSetName = 'ByName')]
-    [Parameter(ParameterSetName = 'ByNameSpace')]
-    [string]$ForgeNameSpace = 'dsc',
+    [string]$ForgeSearchUri = 'https://forgeapi.puppet.com/v3/modules',
     [Parameter(ParameterSetName = 'ByNameSpace')]
     [int]$PaginationBump = 5
   )
@@ -53,7 +53,7 @@ Function Get-ForgeModuleInfo {
   Process {
     if ([string]::IsNullOrEmpty($Name)) {
       # Retrieve all modules in the Forge NameSpace
-      $ForgeSearchParameters.Uri = $ForgeUri
+      $ForgeSearchParameters.Uri = $ForgeSearchUri
       $ForgeSearchParameters.Body = @{
         owner  = $ForgeNameSpace
         limit  = $PaginationBump
@@ -76,7 +76,7 @@ Function Get-ForgeModuleInfo {
       $Results
     } else {
       # Return only specified modules in the forge namespace
-      $UriBase = "$ForgeUri/$ForgeNameSpace-"
+      $UriBase = "$ForgeSearchUri/$ForgeNameSpace-"
       foreach ($Module in $Name) {
         try {
           $ForgeSearchParameters.Uri = "${UriBase}$(Get-PuppetizedModuleName $Module)"

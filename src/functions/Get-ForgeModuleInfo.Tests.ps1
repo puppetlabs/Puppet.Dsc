@@ -51,34 +51,34 @@ Describe 'Get-ForgeModuleInfo' -Tag 'Unit' {
         }
       }
       It 'searches for the specified module on the forge' {
-        $Result = Get-ForgeModuleInfo -Name 'Foo'
+        $Result = Get-ForgeModuleInfo -ForgeNameSpace 'dsc' -Name 'Foo'
         $Result.Name | Should -Be 'foo'
         $Result.Releases | Should -Be @('1.2.3-0-1', '1.2.3-0-0', '1.2.2-0-0')
         $Result.PowerShellModuleInfo | Should -Be 'SomeMetadata for Foo'
         Should -Invoke Invoke-RestMethod -ParameterFilter { $Uri -match 'dsc-foo' } -Times 1
       }
       It 'errors if the module cannot be found' {
-        { Get-ForgeModuleInfo -Name 'Bar' -ErrorAction Stop } | Should -Throw
+        { Get-ForgeModuleInfo -ForgeNameSpace 'dsc' -Name 'Bar' -ErrorAction Stop } | Should -Throw
       }
     }
     Context 'when the Name parameter is not specified' {
       BeforeAll {
         Mock Invoke-RestMethod -ParameterFilter { $Body.offset -eq 0 } {
-          $Module = New-ModuleInfo -Name 'Foo' -Releases '1.2.3-0-1', '1.2.3-0-0', '1.2.2-0-0'
+          $Module = New-ModuleInfo -ForgeNameSpace 'dsc' -Name 'Foo' -Releases '1.2.3-0-1', '1.2.3-0-0', '1.2.2-0-0'
           return New-ForgeResponse -Results @($Module)
         }
         Mock Invoke-RestMethod -ParameterFilter { $Body.offset -eq 1 } {
-          $Module = New-ModuleInfo -Name 'Bar' -Releases '1.2.3-0-1'
+          $Module = New-ModuleInfo -ForgeNameSpace 'dsc' -Name 'Bar' -Releases '1.2.3-0-1'
           return New-ForgeResponse -Results @($Module)
         }
         Mock Invoke-RestMethod -ParameterFilter { $Body.offset -eq 2 } {
-          $Module = New-ModuleInfo -Name 'Baz' -Releases '1.2.3-0-1'
+          $Module = New-ModuleInfo -ForgeNameSpace 'dsc' -Name 'Baz' -Releases '1.2.3-0-1'
           return New-ForgeResponse -Results @($Module) -NextPagination $null
         }
       }
 
       It 'searches the namespace for all modules' {
-        $Result = Get-ForgeModuleInfo -PaginationBump 1
+        $Result = Get-ForgeModuleInfo -ForgeNameSpace 'dsc' -PaginationBump 1
         $Result.Count | Should -Be 3
         $Result[0].Name | Should -Be 'foo'
         $Result[0].Releases | Should -Be @('1.2.3-0-1', '1.2.3-0-0', '1.2.2-0-0')
