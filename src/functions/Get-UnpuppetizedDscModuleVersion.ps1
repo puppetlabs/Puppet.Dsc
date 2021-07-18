@@ -8,6 +8,8 @@ Function Get-UnpuppetizedDscModuleVersion {
     repository but not yet Puppetized and published to the Puppet Forge. If
     a module has not been Puppetized at all, returns *all* discovered versions
     of that module from the PowerShell repository.
+  .PARAMETER ForgeNameSpace
+    The namespace on the Forge to search for modules
   .PARAMETER Name
     The name of one or more PowerShell modules to search for. If no name is
     specified, will compare all PowerShell modules with DSC Resources in the
@@ -22,10 +24,8 @@ Function Get-UnpuppetizedDscModuleVersion {
     Puppet Forge. Use to prevent building legacy versions if not needed.
   .PARAMETER Repository
     The PowerShell repository to search; defaults to the PowerShell Gallery
-  .PARAMETER ForgeUri
+  .PARAMETER ForgeSearchUri
     The Puppet Forge API URI to search; defaults to the public Puppet Forge
-  .PARAMETER ForgeNameSpace
-    The namespace on the Forge to search; defaults to 'dsc'
   .EXAMPLE
     Get-UnpuppetizedDscModuleVersion -Name foo
     This will look for all versions of the foo module published to the
@@ -57,12 +57,13 @@ Function Get-UnpuppetizedDscModuleVersion {
 
   [CmdletBinding()]
   param (
+    [parameter(Mandatory)]
+    [string]$ForgeNameSpace,
     [string[]]$Name,
     [string]$MinimumVersion,
     [switch]$OnlyNewer,
     [string]$Repository,
-    [string]$ForgeUri,
-    [string]$ForgeNameSpace
+    [string]$ForgeSearchUri
   )
 
   Begin {
@@ -83,9 +84,11 @@ Function Get-UnpuppetizedDscModuleVersion {
     If (![string]::IsNullOrEmpty($Repository)) { $GallerySearchParameters.Repository = $Repository }
     If (![string]::IsNullOrEmpty($Name)) { $GallerySearchParameters.Name = $Name }
 
-    $ForgeSearchParameters = @{ ErrorAction = 'SilentlyContinue' }
-    If (![string]::IsNullOrEmpty($ForgeNameSpace)) { $ForgeSearchParameters.ForgeNameSpace = $ForgeNameSpace }
-    If (![string]::IsNullOrEmpty($ForgeUri)) { $ForgeSearchParameters.ForgeUri = $ForgeUri }
+    $ForgeSearchParameters = @{
+      ErrorAction = 'SilentlyContinue'
+      ForgeNameSpace = $ForgeNameSpace
+    }
+    If (![string]::IsNullOrEmpty($ForgeSearchUri)) { $ForgeSearchParameters.ForgeSearchUri = $ForgeSearchUri }
   }
 
   Process {
