@@ -23,11 +23,15 @@ Function ConvertTo-VersionBuild {
 
   Begin { }
   Process {
-    $Version | Sort-Object -Descending | ForEach-Object -Process {
+    $Version | ForEach-Object -Process {
+      $null = $_ -match '(?<Version>\d+\.\d+\.\d+-\d+)-(?<Build>\d+$)'
       [pscustomobject]@{
-        Version = $_.substring(0, ($_.length - 2))
-        Build   = [int]([string]$_[-1])
+        Version = [version]($Matches.Version -replace '-', '.')
+        Build   = [int]($Matches.Build)
       }
+    } | Sort-Object -Descending -Property Version, Build | ForEach-Object -Process {
+      $_.Version = [string]($_.Version) -replace '\.(\d+)$', '-$1'
+      $_
     }
   }
   End { }
