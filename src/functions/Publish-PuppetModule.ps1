@@ -57,7 +57,7 @@ function Publish-PuppetModule {
     Puppet module in ./foo/pkg passing 'FooBarBaz' as the token for
     authenticating to the forge.
   #>
-  [CmdletBinding(DefaultParameterSetName = 'Build')]
+  [CmdletBinding(DefaultParameterSetName = 'Build', SupportsShouldProcess, ConfirmImpact = 'Medium')]
   param (
     [Parameter(Mandatory, ParameterSetName = 'Build')]
     [Parameter(Mandatory, ParameterSetName = 'Publish')]
@@ -131,8 +131,11 @@ function Publish-PuppetModule {
           $PublishParameters.Command += " --file $PackagedModulePath"
         }
 
-        Write-PSFMessage -Level Verbose "Invoking ``$($PublishParameters.Command -replace $ForgeToken, '<FORGE_TOKEN>')`` from $PuppetModuleFolderPath"
-        Invoke-PdkCommand @PublishParameters
+        $PublishMessage = "Invoking ``$($PublishParameters.Command -replace $ForgeToken, '<FORGE_TOKEN>')`` from $PuppetModuleFolderPath"
+        if ($Force -or $PSCmdlet.ShouldProcess('pdk', $PublishMessage)) {
+          Write-PSFMessage -Level Verbose -Message $PublishMessage
+          Invoke-PdkCommand @PublishParameters
+        }
       }
     } Catch {
       $PSCmdlet.ThrowTerminatingError($PSItem)
