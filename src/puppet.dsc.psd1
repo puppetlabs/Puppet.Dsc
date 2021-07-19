@@ -52,6 +52,7 @@
     'Get-UnpuppetizedDscModuleVersion'
     'New-PuppetDscModule'
     'Publish-PuppetModule'
+    'Publish-NewDscModuleVersion'
     'Update-ForgeDscModule'
   )
 
