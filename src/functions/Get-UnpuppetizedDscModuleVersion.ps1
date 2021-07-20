@@ -85,7 +85,7 @@ Function Get-UnpuppetizedDscModuleVersion {
     If (![string]::IsNullOrEmpty($Name)) { $GallerySearchParameters.Name = $Name }
 
     $ForgeSearchParameters = @{
-      ErrorAction = 'SilentlyContinue'
+      ErrorAction    = 'SilentlyContinue'
       ForgeNameSpace = $ForgeNameSpace
     }
     If (![string]::IsNullOrEmpty($ForgeSearchUri)) { $ForgeSearchParameters.ForgeSearchUri = $ForgeSearchUri }
@@ -98,7 +98,7 @@ Function Get-UnpuppetizedDscModuleVersion {
       $ForgeSearchParameters.Name = Get-PuppetizedModuleName -Name $Module.Name
       $ForgeModuleInfo = Get-ForgeModuleInfo @ForgeSearchParameters
       If ($null -ne $ForgeModuleInfo) {
-        $VersionsReleasedToForge = Get-LatestBuild $ForgeModuleInfo.Releases |
+        [System.Collections.Generic.List[string]]$VersionsReleasedToForge = Get-LatestBuild $ForgeModuleInfo.Releases |
           Select-Object -ExpandProperty Version |
           ForEach-Object -Process { $_ -replace '-', '.' }
         $VersionsToRelease = $VersionsToRelease | Where-Object -FilterScript $VersionsToReleaseFilterScript
