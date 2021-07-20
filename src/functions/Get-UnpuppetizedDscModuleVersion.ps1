@@ -85,37 +85,38 @@ Function Get-UnpuppetizedDscModuleVersion {
     If (![string]::IsNullOrEmpty($Name)) { $GallerySearchParameters.Name = $Name }
 
     $ForgeSearchParameters = @{
-      ErrorAction = 'SilentlyContinue'
+      ErrorAction    = 'SilentlyContinue'
       ForgeNameSpace = $ForgeNameSpace
     }
     If (![string]::IsNullOrEmpty($ForgeSearchUri)) { $ForgeSearchParameters.ForgeSearchUri = $ForgeSearchUri }
   }
 
   Process {
-    $GalleryModuleInfo = Get-PowerShellDscModule @GallerySearchParameters
-    ForEach ($Module in $GalleryModuleInfo) {
-      $VersionsToRelease = ConvertTo-StandardizedVersionString -Version $Module.Releases
-      $ForgeSearchParameters.Name = Get-PuppetizedModuleName -Name $Module.Name
-      $ForgeModuleInfo = Get-ForgeModuleInfo @ForgeSearchParameters
-      If ($null -ne $ForgeModuleInfo) {
-        $VersionsReleasedToForge = Get-LatestBuild $ForgeModuleInfo.Releases |
-          Select-Object -ExpandProperty Version |
-          ForEach-Object -Process { $_ -replace '-', '.' }
-        $VersionsToRelease = $VersionsToRelease | Where-Object -FilterScript $VersionsToReleaseFilterScript
-      } elseif (![string]::IsNullOrEmpty($MinimumVersion)) {
-        $VersionsToRelease = $VersionsToRelease | Where-Object -FilterScript { [version]$_ -ge [version]$MinimumVersion }
-      }
+    Get-PowerShellDscModule @GallerySearchParameters |
+      ForEach-Object -Process {
+        $Module = $_
+        $VersionsToRelease = ConvertTo-StandardizedVersionString -Version $Module.Releases
+        $ForgeSearchParameters.Name = Get-PuppetizedModuleName -Name $Module.Name
+        $ForgeModuleInfo = Get-ForgeModuleInfo @ForgeSearchParameters
+        If ($null -ne $ForgeModuleInfo) {
+          $VersionsReleasedToForge = Get-LatestBuild $ForgeModuleInfo.Releases |
+            Select-Object -ExpandProperty Version |
+            ForEach-Object -Process { $_ -replace '-', '.' }
+            $VersionsToRelease = $VersionsToRelease | Where-Object -FilterScript $VersionsToReleaseFilterScript
+          } elseif (![string]::IsNullOrEmpty($MinimumVersion)) {
+            $VersionsToRelease = $VersionsToRelease | Where-Object -FilterScript { [version]$_ -ge [version]$MinimumVersion }
+          }
 
-      If ($null -eq $VersionsToRelease) {
-        Write-PSFMessage -Level Verbose -Message 'No releasable versions based on search criteria need to be published'
-        continue
-      }
+          If ($null -eq $VersionsToRelease) {
+            Write-PSFMessage -Level Verbose -Message 'No releasable versions based on search criteria need to be published'
+            continue
+          }
 
-      [PSCustomObject]@{
-        Name     = $Module.Name
-        Versions = $VersionsToRelease
-      }
-    }
+          [PSCustomObject]@{
+            Name     = $Module.Name
+            Versions = $VersionsToRelease
+          }
+        }
   }
 
   End { }
