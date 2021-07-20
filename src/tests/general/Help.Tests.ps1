@@ -46,7 +46,7 @@ Describe 'Validating function help' -Tag @('Help', 'General') {
     }
     Context 'Test parameter help for <Name>' {
       BeforeDiscovery {
-        $Common = 'Debug', 'ErrorAction', 'ErrorVariable', 'InformationAction', 'InformationVariable', 'OutBuffer', 'OutVariable', 'PipelineVariable', 'Verbose', 'WarningAction', 'WarningVariable'
+        $Common = 'Debug', 'ErrorAction', 'ErrorVariable', 'InformationAction', 'InformationVariable', 'OutBuffer', 'OutVariable', 'PipelineVariable', 'Verbose', 'WarningAction', 'WarningVariable', 'Confirm', 'WhatIf'
         $ParametersToValidate = New-Object -TypeName System.Collections.ArrayList
         $HelpParameterNames = $Help.Parameters.Parameter.Name | Sort-Object -Unique
         $Parameters = $Object.ParameterSets.Parameters | Sort-Object -Property Name -Unique | Where-Object Name -NotIn $common
