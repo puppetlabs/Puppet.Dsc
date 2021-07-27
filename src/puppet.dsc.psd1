@@ -3,7 +3,7 @@
   RootModule        = 'Puppet.Dsc.psm1'
 
   # Version number of this module.
-  ModuleVersion     = '0.7.0'
+  ModuleVersion     = '1.0.0'
 
   # ID used to uniquely identify this module
   GUID              = '37c6b5c1-2614-4ff5-bb9f-a610b7da3086'
@@ -45,15 +45,9 @@
   # Functions to export from this module
   FunctionsToExport = @(
     'ConvertTo-PuppetResourceApi'
-    'Export-PuppetModule'
-    'Get-ForgeModuleInfo'
-    'Get-PowerShellDscModule'
     'Get-PuppetizedModuleName'
-    'Get-UnpuppetizedDscModuleVersion'
     'New-PuppetDscModule'
     'Publish-PuppetModule'
-    'Publish-NewDscModuleVersion'
-    'Update-ForgeDscModule'
   )
 
   # Cmdlets to export from this module
@@ -101,6 +95,12 @@
       # IconUri = ''
 
       # ReleaseNotes of this module
+      # ReleaseNotes = ''
+
+    } # End of PSData hashtable
+
+  } # End of PrivateData hashtable
+}
       # ReleaseNotes = ''
 
     } # End of PSData hashtable
