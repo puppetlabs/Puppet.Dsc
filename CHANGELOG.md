@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2021-07-28
+
 ### Added
 
 - Concept documentation for how Puppet invokes Puppetized DSC Resources in the `about_Puppetized_module_invocation` about help topic ([#74](https://github.com/puppetlabs/Puppet.Dsc/issues/74))
@@ -115,7 +117,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial implementation and release
 
-[unreleased]: https://github.com/puppetlabs/Puppet.Dsc/compare/0.7.0...main
+[unreleased]: https://github.com/puppetlabs/Puppet.Dsc/compare/1.0.0...main
+[1.0.0]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/1.0.0
 [0.7.0]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/0.7.0
 [0.6.0]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/0.6.0
 [0.5.0]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/0.5.0
