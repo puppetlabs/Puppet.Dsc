@@ -35,8 +35,11 @@ jobs:
         run: |
           $VerbosePreference = 'Continue'
           Import-Module Puppet.Dsc -Verbose
-          # [System.Collections.Generic.List[string]]$Results = @()
+          $SkipList = @(
+            'DellBIOSProvider' # Cannot be built because some of the Resources are malformed/invalid PowerShell
+          )
           [System.Collections.Generic.List[string]]$Results = Get-UnpuppetizedDscModuleVersion -ForgeNameSpace dsc |
+            Where-Object -FilterScript { $_.Name -notin $SkipList } |
             Select-Object -First 1 -ExpandProperty Name
           echo "Modules to Build & Release:"
           ($Results | ForEach-Object -Process { "`t$_" }) -join "`r`n"
@@ -77,6 +80,14 @@ jobs:
             winrm e winrm/config/listener
           }
       - name: Publish Unreleased Versions
+        env:
+          FORGE_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
         run: |
           $VerbosePreference = 'Continue'
-          Publish-NewDscModuleVersion -ForgeNameSpace dsc -Name ${{ matrix.module_name }} -ForgeToken "${{ secrets.FORGE_API_TOKEN }}"
+          $PublishParameters = @{
+            ForgeNameSpace = 'dsc'
+            Name = '${{ matrix.module_name }}'
+            OnlyNewer = $true
+            MaxBuildCount = 5
+          }
+          Publish-NewDscModuleVersion @PublishParameters
