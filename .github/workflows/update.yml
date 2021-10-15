@@ -1,0 +1,76 @@
+# When Puppet.Dsc is tagged and released, rebuild all modules from the latest version on the gallery
+name: Update
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: powershell
+
+jobs:
+  setup_matrix:
+    name: "Setup Matrix"
+    runs-on: windows-latest
+    outputs:
+      module_groups: ${{ steps.build-matrix.outputs.module_groups }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get Latest Tag
+        id: latest_tag
+        run: |
+          $TagVersion = git tag --list |
+            ForEach-Object -Process { [version]$_.Trim() } |
+            Sort-Object -Descending |
+            Select-Object -First 1
+          echo "::set-output name=tag::$($TagVersion.ToString())"
+      - name: PSVersion Table
+        run: $psversiontable
+      - name: Install PowerShell Prerequisites
+        run: |
+          Import-Module PowerShellGet
+          $InstallParameters = @{
+            Name = 'Puppet.Dsc'
+            RequiredVersion = '${{ steps.latest_tag.outputs.tag }}'
+            Scope = 'AllUsers'
+            Force = $True
+            Verbose = $True
+            ErrorAction = 'Stop'
+          }
+          Install-Module @InstallParameters
+      - name: Generate Module Groups
+        run: |
+          Import-Module Puppet.Dsc
+          $VerbosePreference = 'Continue'
+          Try {
+            # Retrieve the Puppetized Modules from the Forge
+            $PuppetizedModules = Get-ForgeModuleInfo -ForgeNameSpace 'dsc' -ErrorAction Stop |
+              Select-Object -ExpandProperty Name
+            # Instantiate the matrix groups and fill them
+            $Groups = [pscustomobject]@{}
+            ForEach ($GroupNumber in 1..20) {
+              $Parameters = @{
+                MemberType = 'NoteProperty'
+                Name = "Group$GroupNumber"
+                Value = [System.Collections.Generic.List[string]]@()
+              }
+              $Groups | Add-Member @Parameters
+            }
+            foreach ($ModuleEntry in 0..$PuppetizedModules.Count) {
+              $GroupNumber = ($ModuleEntry % 20) + 1
+              $Groups."Group$GroupNumber".Add($PuppetizedModules[$ModuleEntry])
+            }
+            echo "Modules to Rebuild & Release by Group:"
+            ForEach ($GroupNumber in 1..20) {
+              echo "Group ${GroupNumber}: $($Groups."Group$GroupNumber" | % { "`r`n`t$_" })"
+            }
+            echo "::set-output name=module_groups::$($Groups | ConvertTo-Json -Compress -Depth 5)"
+          } Catch {
+            $_ | Format-List -Property * -Force
+            Throw 'ERROR! See above!'
+          }
