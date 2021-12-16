@@ -2,6 +2,11 @@
 
 This PowerShell module downloads DSC Resources from the PSGallery and then builds a Puppet Module containing parsed Puppet types. Similar to the puppetlabs-dsc module, it contains the source DSC Resource as well as the Puppet type, but is configurable to only have the DSC Resources you specify. This reduces the size of the module and allows different deployment scenarios.
 
+This will run periodically to automatically convert and publish DSC resources to the [Puppet Forge `dsc` namespace](https://forge.puppet.com/dsc).
+
+[![Puppetize](https://github.com/puppetlabs/Puppet.Dsc/actions/workflows/puppetize.yml/badge.svg)](https://github.com/puppetlabs/Puppet.Dsc/actions/workflows/puppetize.yml)
+
+
 ## Converting a Module from the Public Gallery
 
 Use the `New-PuppetDscModule` function to download DSC Resources from the PSGallery and build a Puppet Module which vendors and exposes those resources as Puppet resources.
