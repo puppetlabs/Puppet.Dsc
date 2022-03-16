@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2022-03-16
+
+### Added
+
+- GitHub Action that automates the puppetization of modules from the PowerShell Gallery.
+- Implement Automatic Publish to Forge for Unpublished Modules
+- Status badge in the README.
+
+### Fixed
+
+- Ensure that `Get-UnpuppetizedDscModuleVersion` can properly process version numbers for modules returned by forge queries.
+
 ## [1.0.0] - 2021-07-28
 
 ### Added
@@ -117,7 +129,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial implementation and release
 
-[unreleased]: https://github.com/puppetlabs/Puppet.Dsc/compare/1.0.0...main
+[unreleased]: https://github.com/puppetlabs/Puppet.Dsc/compare/1.0.1...main
+[1.0.1]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/1.0.1
 [1.0.0]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/1.0.0
 [0.7.0]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/0.7.0
 [0.6.0]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/0.6.0
