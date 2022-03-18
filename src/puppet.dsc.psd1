@@ -3,7 +3,7 @@
   RootModule        = 'Puppet.Dsc.psm1'
 
   # Version number of this module.
-  ModuleVersion     = '1.0.1'
+  ModuleVersion     = '1.0.2'
 
   # ID used to uniquely identify this module
   GUID              = '37c6b5c1-2614-4ff5-bb9f-a610b7da3086'

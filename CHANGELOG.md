@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.1] - 2022-03-16
+## [1.0.2] - 2022-03-18
 
 ### Added
 
@@ -129,8 +129,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial implementation and release
 
-[unreleased]: https://github.com/puppetlabs/Puppet.Dsc/compare/1.0.1...main
-[1.0.1]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/1.0.1
+[unreleased]: https://github.com/puppetlabs/Puppet.Dsc/compare/1.0.2...main
+[1.0.2]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/1.0.2
 [1.0.0]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/1.0.0
 [0.7.0]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/0.7.0
 [0.6.0]: https://github.com/puppetlabs/Puppet.Dsc/releases/tag/0.6.0
