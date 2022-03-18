@@ -26,8 +26,6 @@ jobs:
         id: build-matrix
         run: |
           $VerbosePreference = 'Continue'
-          # Need to import from local to get fixes for search command until next release:
-          Import-Module .\src\Puppet.Dsc.psd1 -Verbose
           $SkipList = @(
             'DellBIOSProvider'                    # Cannot be built because some of the Resources are malformed/invalid PowerShell; source code not available to report bug
             'DellBIOSProviderX86'                 # Cannot be built because some of the Resources are malformed/invalid PowerShell; source code not available to report bug
