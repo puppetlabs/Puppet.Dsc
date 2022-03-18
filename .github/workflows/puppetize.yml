@@ -58,6 +58,7 @@ jobs:
             'xITGHyperV'                          # Lacks root module; not under active development
             'TestEmbeddedDSCResource'             # PowerShell 7 Only
             'DSCR_MIMSettings'                    # Cannot load dependency module; TODO: Ticket and validate loading of dependency modules/modulepath during run
+            'Carbon'                              # Permission denied when copying carbon.dll; TODO: Ticket and validate
           )
           Try {
             [System.Collections.Generic.List[string]]$Results = Get-UnpuppetizedDscModuleVersion -ForgeNameSpace dsc -OnlyNewer |
