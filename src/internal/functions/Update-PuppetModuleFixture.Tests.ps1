@@ -60,10 +60,10 @@ fixtures:
       It 'Writes a branch for the fixture if specified' {
         $Result = Update-PuppetModuleFixture -PuppetModuleFolderPath TestDrive:\ -Fixture @{
           Section = 'repositories'
-          Repo    = 'git://github.com/puppetlabs/ruby-pwsh.git'
+          Repo    = 'https://github.com/puppetlabs/ruby-pwsh.git'
           Branch  = 'maint/main/test-branch'
         }
-        $Result | Should -Match 'repo: git://github.com/puppetlabs/ruby-pwsh.git'
+        $Result | Should -Match 'repo: https://github.com/puppetlabs/ruby-pwsh.git'
         $Result | Should -Match 'branch: maint/main/test-branch'
       }
     }

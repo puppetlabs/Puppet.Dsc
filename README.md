@@ -165,7 +165,7 @@ If you are developing a feature in tandem with changes to the [underlying base p
 ```powershell
 $container = New-PesterContainer -Path .\Acceptance.Tests.ps1 -Data @{ FixtureHash = @{
   Section = 'repositories'
-  Repo    = 'git://github.com/puppetlabs/ruby-pwsh.git'
+  Repo    = 'https://github.com/puppetlabs/ruby-pwsh.git'
   Branch  = 'main'
 } }
 Invoke-Pester -Output Detailed -Container $container
@@ -177,7 +177,7 @@ for example, if I wanted to validate the `maint/main/some-improvement` branch on
 ```powershell
 $container = New-PesterContainer -Path .\Acceptance.Tests.ps1 -Data @{ FixtureHash = @{
   Section = 'repositories'
-  Repo    = 'git://github.com/michaeltlombardi/ruby-pwsh.git'
+  Repo    = 'https://github.com/michaeltlombardi/ruby-pwsh.git'
   Branch  = 'maint/main/some-improvement'
 } }
 Invoke-Pester -Output Detailed -Container $container

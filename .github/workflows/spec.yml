@@ -62,7 +62,7 @@ jobs:
             pwshlib_ref: "latest" # Change to a specific version if desired
             results_file: Acceptance.Forge.Results.xml
           - pwshlib_source: git
-            pwshlib_repo: "git://github.com/puppetlabs/ruby-pwsh.git" # Change to another fork if desired
+            pwshlib_repo: "https://github.com/puppetlabs/ruby-pwsh.git" # Change to another fork if desired
             pwshlib_ref: main # Change to another branch if desired
             results_file: Acceptance.Git.Results.xml
     steps:
