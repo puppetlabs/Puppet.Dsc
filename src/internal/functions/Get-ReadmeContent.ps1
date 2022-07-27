@@ -46,6 +46,7 @@ function Get-ReadmeContent {
     $ResourceApiOverview = 'https://puppet.com/docs/puppet/latest/create_types_and_providers_resource_api.html'
     $ResourceApiDocumentation = 'https://puppet.com/docs/puppet/latest/about_the_resource_api.html'
     $dscForgePage = 'https://forge.puppet.com/dsc'
+    $LegacyDscForgePage = 'https://forge.puppet.com/modules/puppetlabs/dsc'
     $pwshlibForgePage = 'https://forge.puppet.com/puppetlabs/pwshlib'
     $pwshlibIssuesPage = 'https://github.com/puppetlabs/ruby-pwsh/issues/new/choose'
     $PowerShellGetUri = 'https://github.com/PowerShell/PowerShellGet'
