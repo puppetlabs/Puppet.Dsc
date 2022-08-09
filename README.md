@@ -57,6 +57,16 @@ Verify the resources are created successfully.
 pdk bundle exec puppet resource dsc_psrepository
 ```
 
+## Converted types
+Please be aware that, by the nature of the conversion, a puppetized DSC resource may not behave the same way it does as a powershell DSC resource. As an example, in powershell it is possible to pass a String as a valid value for a parameter that requires a String[]. This 
+is not the case for puppet, as you will be getting an error similar to this: 
+
+```
+Error: Failed to apply catalog: Parameter dsc_type failed on Dsc_resource[foobar]: dsc_resource.dsc_type expects a value of type Undef or Array, got String
+```
+
+If you encounter this error, you may have to reconsider the type of your chosen value.
+
 ## Troubleshooting
 
 Occasionally, something will go wrong when trying to apply a manifest containing Puppetized DSC resources.
