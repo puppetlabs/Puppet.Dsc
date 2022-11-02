@@ -45,6 +45,7 @@ Function Get-PuppetDataType {
   If (![String]::IsNullOrEmpty($DscResourceProperty.Values)) {
     # Enums are handles specially
     $InnerText = $DscResourceProperty.Values | ForEach-Object -Process { "'$_'" }
+    $InnerText += $InnerText | ForEach-Object -Process {"$($_.toLower())" } | Select-Object -Unique
     $PuppetDataTypeText = "Enum[$($InnerText -join ', ')]"
   } Else {
     If (Test-EmbeddedInstance -PropertyType $DscResourceProperty.PropertyType) {

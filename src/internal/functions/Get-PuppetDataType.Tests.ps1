@@ -36,7 +36,7 @@ Describe 'Get-PuppetDataType' -Tag 'Unit' {
         Get-PuppetDataType -DscResourceProperty (New-DscParameter -PropertyType 'foo') | Should -BeExactly 'Optional[Hash]'
       }
       It 'Handles Enums' {
-        Get-PuppetDataType -DscResourceProperty (New-DscParameter -Values @('Foo', 'Bar', 'Baz')) | Should -BeExactly "Optional[Enum['Foo', 'Bar', 'Baz']]"
+        Get-PuppetDataType -DscResourceProperty (New-DscParameter -Values @('Foo', 'Bar', 'Baz')) | Should -BeExactly "Optional[Enum['Foo', 'Bar', 'Baz', 'foo', 'bar', 'baz']]"
       }
       It 'Handles well-known types' {
         Get-PuppetDataType -DscResourceProperty (New-DscParameter -PropertyType '[Bool]') | Should -BeExactly 'Optional[Boolean]'
