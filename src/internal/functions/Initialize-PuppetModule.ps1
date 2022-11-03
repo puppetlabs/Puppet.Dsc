@@ -8,6 +8,8 @@ function Initialize-PuppetModule {
       The path, relative or literal, to the Puppet module's root folder.
     .PARAMETER PuppetModuleName
       The name of the Puppet module to create.
+    .PARAMETER PDKTemplateRef
+      Specifies the template git branch or tag to use when creating new moudles or classes.
     .PARAMETER Confirm
       Prompts for confirmation before overwriting the file
     .PARAMETER WhatIf
@@ -22,11 +24,17 @@ function Initialize-PuppetModule {
     [Parameter(Mandatory = $True)]
     [string]$OutputFolderPath,
     [Parameter(Mandatory = $True)]
-    [string]$PuppetModuleName
+    [string]$PuppetModuleName,
+    [Parameter(Mandatory = $False)]
+    [string]$PDKTemplateRef
   )
 
   begin {
     $Command = "pdk new module $PuppetModuleName --skip-interview --template-url https://github.com/puppetlabs/pdk-templates"
+    if ($PSBoundParameters.ContainsKey('PDKTemplateRef')) {
+      $Command = "$Command --template-ref $PDKTemplateRef"
+    }
+
     $ModuleFolderPath = Join-Path -Path $OutputFolderPath -ChildPath $PuppetModuleName
     $TemplateFolder = Join-Path -Path (Split-Path -Path $MyInvocation.MyCommand.Module.Path -Parent) -ChildPath 'internal/templates/static'
   }

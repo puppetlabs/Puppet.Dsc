@@ -41,6 +41,8 @@ Function New-PuppetDscModule {
     .PARAMETER Repository
       Specifies a non-default PSRepository.
       If left blank, will default to PSGallery.
+    .PARAMETER PDKTemplateRef
+      Specifies the template git branch or tag to use when creating new moudles or classes.
     .EXAMPLE
       New-PuppetDscModule -PowerShellModuleName PowerShellGet -PowerShellModuleVersion 2.2.3 -Repository PSGallery
 
@@ -58,7 +60,8 @@ Function New-PuppetDscModule {
     [string]$OutputDirectory,
     [switch]$AllowPrerelease,
     [switch]$PassThru,
-    [string]$Repository
+    [string]$Repository,
+    [string]$PDKTemplateRef = '2.5.0'
   )
 
   Begin {
@@ -110,7 +113,7 @@ Function New-PuppetDscModule {
         $ErrorActionPreference = 'Stop'
         # Scaffold the module via the PDK
         Write-PSFMessage -Message 'Initializing the Puppet Module'
-        Initialize-PuppetModule -OutputFolderPath $OutputDirectory -PuppetModuleName $PuppetModuleName -verbose
+        Initialize-PuppetModule -OutputFolderPath $OutputDirectory -PuppetModuleName $PuppetModuleName -PDKTemplateRef $PDKTemplateRef -verbose
 
         # Vendor the PowerShell module and all of its dependencies
         Write-PSFMessage -Message 'Vendoring the DSC Resources'
