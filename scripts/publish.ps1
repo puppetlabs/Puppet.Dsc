@@ -4,9 +4,10 @@ Param(
 )
 
 Begin {
-  $BuildFolder = Join-Path -Path $PSScriptRoot -ChildPath 'Puppet.Dsc'
-  $SourceFolder = Join-Path -Path $PSScriptRoot -ChildPath 'src'
-  $MarkdownDocsFolder = Join-Path -Path $PSScriptRoot -ChildPath 'docs'
+  $WorkspaceRoot = Split-Path -Parent $PSscriptRoot
+  $BuildFolder = Join-Path -Path $WorkspaceRoot -ChildPath 'Puppet.Dsc'
+  $SourceFolder = Join-Path -Path $WorkspaceRoot -ChildPath 'src/Puppet.Dsc'
+  $MarkdownDocsFolder = Join-Path -Path $WorkspaceRoot -ChildPath 'docs'
 
   $FoldersToCopy = @(
   (Join-Path -Path $SourceFolder -ChildPath 'en-us')
@@ -35,8 +36,6 @@ Process {
     Copy-Item -Path $FilesToCopy -Destination $BuildFolder
 
     # Convert and write documentation
-    Import-Module "$BuildFolder\Puppet.Dsc.psd1" -Force
-    New-MarkdownHelp -Module 'Puppet.Dsc' -OutputFolder $MarkdownDocsFolder -Force
     New-ExternalHelp -Path $MarkdownDocsFolder -OutputPath "$BuildFolder\en-us\"
 
     # Publish the module and tag if desired

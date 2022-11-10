@@ -1,0 +1,43 @@
+name: "release"
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "The target for the release. This can be a commit sha or a branch."
+        required: false
+        default: "main"
+        type: "string"
+
+jobs:
+  release:
+    name: "release"
+    runs-on: "windows-latest"
+    defaults:
+      run:
+        shell: "powershell"
+
+    steps:
+
+      - name: "checkout"
+        uses: "actions/checkout@v3"
+        with:
+          ref: ${{ github.event.inputs.target }}
+          clean: true
+          fetch-depth: 0
+
+      - name: "get version"
+        id: "get_version"
+        run: |
+          Install-Module -Name PlatyPS -Scope AllUsers -Force
+          $DataFile = Import-PowerShellDataFile -Path .\src\puppet.dsc.psd1
+          Set-Content -Path $ENV:GITHUB_OUTPUT -Value "version=$($DataFile.ModuleVersion)"
+
+      - name: "create release"
+        run: |
+          gh release create ${{ steps.get_version.outputs.version }} --title ${{ steps.get_version.outputs.version }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "publish module"
+        run: .\scripts\publish.ps1

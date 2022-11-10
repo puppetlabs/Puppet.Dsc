@@ -15,10 +15,9 @@ $ErrorActionPreference = 'Stop'
 Get-Module -Name Pester | Remove-Module
 Import-Module -Name Pester -MinimumVersion 5.0.0
 
-$ProjectRoot = Split-Path -Parent $PSCommandPath |
-  Split-Path -Parent |
-  Resolve-Path
-Import-Module -Name (Join-Path -Path $ProjectRoot -ChildPath 'src/puppet.dsc.psd1')
+$ProjectRoot = Split-Path -Parent $PSCommandPath | Split-Path -Parent | Resolve-Path
+
+Import-Module -Name (Join-Path -Path $ProjectRoot -ChildPath 'src/Puppet.Dsc/puppet.dsc.psd1')
 
 $PesterConfiguration = New-PesterConfiguration
 $PesterConfiguration.Output.Verbosity = 'Detailed'
