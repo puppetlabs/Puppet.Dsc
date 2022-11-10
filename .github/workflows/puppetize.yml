@@ -1,103 +1,79 @@
-name: Puppetize
-on:
-  schedule:
-    - cron: "0 * * * *"
-  workflow_dispatch:
+name: "puppetize"
 
-defaults:
-  run:
-    shell: powershell
+on:
+  workflow_dispatch:
+    inputs:
+      module_name:
+        description: |
+          The name of the PowerShell module as it appears on the PowerShell Gallery.
+        required: false
+
+env:
+  pdk_version: 2.5.0.0
+  module_cache: Puppet.Dsc, PSFramework, PSDscResources, powershell-yaml
 
 jobs:
-  setup_matrix:
-    name: "Setup Matrix"
-    runs-on: windows-latest
+  setup:
+    name: "setup"
+    runs-on: "windows-latest"
     outputs:
-      publish_matrix: ${{ steps.build-matrix.outputs.publish_matrix }}
+      module: ${{ steps.setup_matrix.outputs.module }}
+
     steps:
-      - uses: actions/checkout@v2
-      - name: PSVersion Table
-        run: $psversiontable
-      - name: Install PowerShell Prerequisites
+
+      - name: "checkout"
+        uses: "actions/checkout@v3"
+
+      - name: "install modules"
+        uses: potatoqualitee/psmodulecache@v5.1
+        with:
+          shell: powershell
+          modules-to-cache: ${{ env.module_cache }}
+
+      - name: "setup matrix"
+        id: "setup_matrix"
+        shell: powershell
         run: |
-          Import-Module PowerShellGet
-          $VerbosePreference = 'Continue'
-          Install-Module -Name Puppet.Dsc -MinimumVersion 1.0.0 -Scope AllUsers -Force
-      - name: Build Matrix
-        id: build-matrix
-        run: |
-          $VerbosePreference = 'Continue'
-          $SkipList = @(
-            'DellBIOSProvider'                    # Cannot be built because some of the Resources are malformed/invalid PowerShell; source code not available to report bug
-            'DellBIOSProviderX86'                 # Cannot be built because some of the Resources are malformed/invalid PowerShell; source code not available to report bug
-            'Microsoft365DSC'                     # https://github.com/microsoft/Microsoft365DSC/issues/1383
-            'xSql'                                # Cannot be built because some of the Resources are malformed/invalid PowerShell; source code not available to report bug
-            'PrintManagementDsc'                  # Cannot be built because of an error in using non-gallery dependencies; TODO: TICKET
-            'xSynergy'                            # Cannot be built because some of the Resources are malformed/invalid PowerShell; source code not available to report bug
-            'PowerStig'                           # Module with vendored dependencies is too large for Forge Upload
-            'ADCSTemplate'                        # Module missing summary - need to fix parsing for Update-PuppetModuleMetadata; TODO: TICKET
-            'QlikResources'                       # Module fails to load because of failure in dependency module, Qlik-Cli; TODO: TICKET
-            'GuestConfiguration'                  # Binary DSC Resources in module do not have their module name included; source code not available to report bug
-            'cIBMInstallationManager'             # Cannot load dependency module; TODO: Ticket and validate loading of dependency modules/modulepath during run
-            'cIBMWebSphereAppServer'              # Cannot load dependency module; TODO: Ticket and validate loading of dependency modules/modulepath during run
-            'Cisco.UCS.DesiredStateConfiguration' # Cannot save the module due to license agreement
-            'cWMIPermanentEvents'                 # Cannot load localized datafile; Project has not been updated since 2014
-            'xPrinter'                            # Missing module metadata
-            'cEPRSAzureFeatures'                  # Malformed module not updated since 2015
-            'cEprsCreateWindowsService'           # Malformed module not updated since 2015
-            'POSHOrigin_ActiveDirectoryDNS'       # Cannot load dependency module; TODO: Ticket and validate loading of dependency modules/modulepath during run
-            'cMDTBuildLab'                        # Cannot load dependency module; TODO: Ticket and validate loading of dependency modules/modulepath during run
-            'LAPS.Nano.DSC'                       # PowerShell module manifest is malformed; module not updates since 2016
-            'posh-kentico'                        # Module with vendored dependencies is too large for Forge Upload
-            'cIBMHTTPServer'                      # Cannot load dependency module; TODO: Ticket and validate loading of dependency modules/modulepath during run
-            'cIBMWebSpherePortal'                 # Cannot load dependency module; TODO: Ticket and validate loading of dependency modules/modulepath during run
-            'CISDSC'                              # Cannot load dependency module; TODO: Ticket and validate loading of dependency modules/modulepath during run
-            'GenericInstall'                      # Malformed module not actively maintained
-            'cWebManagementService'               # Needs to have IIS installed to build
-            'PfaDscResource'                      # Cannot load dependency module; TODO: Ticket and validate loading of dependency modules/modulepath during run
-            'xITGHyperV'                          # Lacks root module; not under active development
-            'TestEmbeddedDSCResource'             # PowerShell 7 Only
-            'DSCR_MIMSettings'                    # Cannot load dependency module; TODO: Ticket and validate loading of dependency modules/modulepath during run
-            'Carbon'                              # Permission denied when copying carbon.dll; TODO: Ticket and validate
-          )
-          Try {
-            [System.Collections.Generic.List[string]]$Results = Get-UnpuppetizedDscModuleVersion -ForgeNameSpace dsc -OnlyNewer |
-              Where-Object -FilterScript { $_.Name -notin $SkipList } |
-              Select-Object -First 10 -ExpandProperty Name
-            echo "Modules to Build & Release:"
-            ($Results | ForEach-Object -Process { "`t$_" }) -join "`r`n"
-          } Catch {
-            $_ | Format-List -Property * -Force
-            Throw 'ERROR! See above!'
+          Import-Module -Name PSDesiredStateConfiguration -Force
+          Import-Module -Name ./src/BuildMatrix/BuildMatrix.psd1 -Force
+
+          $ModuleData = $ENV:MODULE_NAME
+          if (!$ModuleData) {
+            $ModuleData = Get-ModuleData -Path ./dsc_resources.yml -UnPuppetizedOnly
           }
-          If ($Results.Count -eq 0) {
-            echo "Empty matrix!"
-            echo "::set-output name=publish_matrix::{}"
-          } Else {
-            $Matrix = @{ module_name = $Results }
-            echo "Build Matrix:`r`n$($Matrix | ConvertTo-Json)"
-            echo "::set-output name=publish_matrix::$($Matrix | ConvertTo-Json -Compress)"
-          }
-  publish_unreleased_versions:
-    name: "Puppetize ${{ matrix.module_name }}"
-    needs:
-      - setup_matrix
-    if: ${{ needs.setup_matrix.outputs.publish_matrix != '{}' }}
-    runs-on: windows-latest
+
+          $ModuleData | ConvertTo-BuildMatrix | Set-BuildMatrix
+        env:
+          MODULE_NAME: ${{ github.event.inputs.module_name }}
+
+  puppetize:
+    runs-on: "windows-latest"
+    defaults:
+      run:
+        shell: powershell
+    needs: "setup"
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.setup_matrix.outputs.publish_matrix) }}
+      matrix:
+        module: ${{ fromJson(needs.setup.outputs.module) }}
+
     steps:
-      - name: PSVersion Table
-        run: $psversiontable
-      - name: Install Prerequisites
+
+      - name: "checkout"
+        uses: "actions/checkout@v3"
+
+      - name: "install required modules"
+        uses: potatoqualitee/psmodulecache@v5.1
+        with:
+          shell: powershell
+          modules-to-cache: ${{ env.module_cache }}
+
+      - name: "install pdk"
         run: |
-          choco install pdk -y
-          Import-Module C:\ProgramData\chocolatey\helpers\chocolateyProfile.psm1
-          Update-SessionEnvironment
-          Install-Module -Name Puppet.Dsc -MinimumVersion 1.0.0 -Scope AllUsers -Force
-          Get-Command PDK, Publish-NewDscModuleVersion
-      - name: Configure WinRM
+          choco feature disable -n=showDownloadProgress
+          choco install pdk --version ${{ env.pdk_version }} -y
+
+      - name: "configure winrm"
         run: |
           Write-Host 'Ensuring WinRM is configured for DSC'
           Get-ChildItem WSMan:\localhost\Listener\ -OutVariable Listeners | Format-List * -Force
@@ -106,16 +82,17 @@ jobs:
             winrm create winrm/config/Listener?Address=*+Transport=HTTP
             winrm e winrm/config/listener
           }
-      - name: Publish Unreleased Versions
-        env:
-          FORGE_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+
+      - name: "publish module"
         run: |
-          $VerbosePreference = 'Continue'
+          Import-Module -Name PSDesiredStateConfiguration -Force
+          Import-Module -Name Puppet.Dsc -Force
+          $null = Get-Command PDK, Publish-NewDscModuleVersion
+
           $PublishParameters = @{
             ForgeNameSpace = 'dsc'
             Name = '${{ matrix.module_name }}'
             OnlyNewer = $true
-            MaxBuildCount = 5
+            MaxBuildCount = 1
           }
-          $PublishParameters
-          Publish-NewDscModuleVersion @PublishParameters
+          Publish-NewDscModuleVersion @PublishParameters -Verbose
