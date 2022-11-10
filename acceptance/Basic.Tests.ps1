@@ -8,8 +8,8 @@ BeforeAll {
   $ModuleRoot = Split-Path $PSCommandPath -Parent |
     Split-Path -Parent |
     Join-Path -ChildPath 'src'
-  . "$ModuleRoot\internal\functions\Invoke-PdkCommand.ps1"
-  Import-Module "$ModuleRoot/puppet.dsc.psd1"
+  . "$ModuleRoot\Puppet.Dsc\internal\functions\Invoke-PdkCommand.ps1"
+  Import-Module "$ModuleRoot/Puppet.Dsc/puppet.dsc.psd1"
 }
 
 Describe 'Acceptance Tests: Basic' -Tag @('Acceptance', 'Basic') {

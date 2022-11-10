@@ -4,13 +4,13 @@ Param (
   [string]$PwshLibReference
 )
 
-Describe 'Acceptance Tests: Multi-Module' -Tag @('Acceptance', 'MultiModule') {
+Describe 'Acceptance Tests: Multi-Module' -Tag MultiModule {
   BeforeAll {
     $ModuleRoot = Split-Path $PSCommandPath -Parent |
       Split-Path -Parent |
       Join-Path -ChildPath 'src'
-    . "$ModuleRoot\internal\functions\Invoke-PdkCommand.ps1"
-    Import-Module "$ModuleRoot/puppet.dsc.psd1"
+    . "$ModuleRoot\Puppet.Dsc\internal\functions\Invoke-PdkCommand.ps1"
+    Import-Module "$ModuleRoot/Puppet.Dsc/puppet.dsc.psd1"
   }
 
   BeforeDiscovery {
@@ -26,10 +26,10 @@ Describe 'Acceptance Tests: Multi-Module' -Tag @('Acceptance', 'MultiModule') {
     If ($null -eq $PwshLibSource -or 'forge' -eq $PwshLibSource) {
       If ($null -eq $PwshLibRepo) { $PwshLibRepo = 'puppetlabs/pwshlib' }
       If ([string]::IsNullOrEmpty($PwshLibReference) -or $PwshLibReference -eq 'latest' ) {
-        puppet module install $PwshLibRepo --target-dir $OutputDirectory --force
+        pdk bundle exec puppet module install $PwshLibRepo --target-dir $OutputDirectory --force
         If ($LastExitCode -ne 0) { Throw "Something went wrong installing $PwshLibRepo to $OutputDirectory with Puppet" }
       } Else {
-        puppet module install $PwshLibRepo --version $PwshLibReference --target-dir $OutputDirectory --force
+        puppet bundle exec module install $PwshLibRepo --version $PwshLibReference --target-dir $OutputDirectory --force
         If ($LastExitCode -ne 0) { Throw "Something went wrong installing $PwshLibRepo at $PwshLibReference to $OutputDirectory with Puppet" }
       }
     } ElseIf ('git' -eq $PwshLibSource) {
@@ -44,7 +44,7 @@ Describe 'Acceptance Tests: Multi-Module' -Tag @('Acceptance', 'MultiModule') {
         Pop-Location
       }
       Pop-Location
-      puppet module list --modulepath $OutputDirectory
+      puppet bundle exec module list --modulepath $OutputDirectory
     } Else { Throw "Unexpected pwshlib source: $PwshLibSource" }
     # Ensure the website test directory exists
     If (-not (Test-Path $SiteDirectory -PathType Container -ErrorAction SilentlyContinue)) {
@@ -85,7 +85,7 @@ Describe 'Acceptance Tests: Multi-Module' -Tag @('Acceptance', 'MultiModule') {
     } | New-Item $WebServerManifest
 
     $IdempotentTestCase = @{
-      ScriptBlock = "puppet apply $WebServerManifest --modulepath $OutputDirectory --verbose --trace *>&1"
+      ScriptBlock = "pdk bundle exec puppet apply $WebServerManifest --modulepath $OutputDirectory --verbose --trace *>&1"
       SiteContent = (Get-Content -Raw -Path "$ProjectRoot\examples\webserver\website\index.html")
     }
   }
