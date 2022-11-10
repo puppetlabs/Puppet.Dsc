@@ -2,6 +2,7 @@
 import
 .vagrant/
 *Results.xml
-Puppet.Dsc/
 docs/*
 !docs/about_*
+Puppet.Dsc/
+!src/Puppet.Dsc/
