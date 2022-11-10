@@ -1,0 +1,98 @@
+name: "repuppetize"
+
+on:
+  workflow_dispatch:
+    inputs:
+      module_name:
+        description: |
+          The name of the PowerShell module as it appears on the Forge.
+        required: false
+
+env:
+  pdk_version: 2.5.0.0
+  module_cache: Puppet.Dsc, PSFramework, PSDscResources, powershell-yaml
+
+jobs:
+  setup:
+    name: "setup"
+    runs-on: "windows-latest"
+    outputs:
+      module: ${{ steps.setup_matrix.outputs.module }}
+
+    steps:
+
+      - name: "checkout"
+        uses: "actions/checkout@v3"
+
+      - name: "install modules"
+        uses: potatoqualitee/psmodulecache@v5.1
+        with:
+          shell: powershell
+          modules-to-cache: ${{ env.module_cache }}
+
+      - name: "setup matrix"
+        id: "setup_matrix"
+        shell: powershell
+        run: |
+          Import-Module -Name PSDesiredStateConfiguration -Force
+          Import-Module -Name ./src/BuildMatrix/BuildMatrix.psd1 -Force
+
+          $ModuleData = $ENV:MODULE_NAME
+          if (!$ModuleData) {
+            $ModuleData = Get-ModuleData -Path ./dsc_resources.yml -PuppetizedOnly
+          }
+
+          $ModuleData | ConvertTo-BuildMatrix | Set-BuildMatrix
+        env:
+          MODULE_NAME: ${{ github.event.inputs.module_name }}
+
+  repuppetize:
+    runs-on: "windows-latest"
+    defaults:
+      run:
+        shell: powershell
+    needs: "setup"
+    strategy:
+      fail-fast: false
+      matrix:
+        module: ${{ fromJson(needs.setup.outputs.module) }}
+
+    steps:
+
+      - name: "checkout"
+        uses: "actions/checkout@v3"
+
+      - name: "install required modules"
+        uses: potatoqualitee/psmodulecache@v5.1
+        with:
+          shell: powershell
+          modules-to-cache: ${{ env.module_cache }}
+
+      - name: "install pdk"
+        run: |
+          choco feature disable -n=showDownloadProgress
+          choco install pdk --version ${{ env.pdk_version }} -y
+
+      - name: "configure winrm"
+        run: |
+          Write-Host 'Ensuring WinRM is configured for DSC'
+          Get-ChildItem WSMan:\localhost\Listener\ -OutVariable Listeners | Format-List * -Force
+          $HTTPListener = $Listeners | Where-Object -FilterScript { $_.Keys.Contains('Transport=HTTP') }
+          If ($HTTPListener.Count -eq 0) {
+            winrm create winrm/config/Listener?Address=*+Transport=HTTP
+            winrm e winrm/config/listener
+          }
+
+      - name: "update module"
+        run: |
+          Import-Module -Name PSDesiredStateConfiguration -Force
+          Import-Module -Name Puppet.Dsc -Force
+          $null = Get-Command PDK, Publish-NewDscModuleVersion
+
+          $UpdateForgeDscModule = @{
+            ForgeNameSpace = 'dsc'
+            Name = '${{ matrix.module }}'
+            LatestMajorVersionOnly = $true
+            MaximumVersionCountToRebuild = 1
+          }
+          Update-ForgeDscModule @UpdateForgeDscModule -Verbose
