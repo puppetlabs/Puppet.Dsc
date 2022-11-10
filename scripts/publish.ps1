@@ -1,7 +1,6 @@
-[cmdletbinding()]
+[CmdletBinding()]
 Param(
-  [switch]$Publish,
-  [switch]$Tag
+  [switch]$Publish
 )
 
 Begin {
@@ -45,9 +44,6 @@ Process {
       Publish-Module -Path $BuildFolder -NugetAPIKey $Env:GALLERY_TOKEN
     } Else {
       Publish-Module -Path $BuildFolder -NugetAPIKey $Env:GALLERY_TOKEN -WhatIf -Verbose
-      If ($Tag) {
-        # TODO: Logic for automated tagging
-      }
     }
   } Catch {
     $PSCmdlet.ThrowTerminatingError($PSItem)
