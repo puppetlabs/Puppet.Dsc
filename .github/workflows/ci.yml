@@ -1,0 +1,136 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+env:
+  pdk_version: 2.5.0.0
+  module_cache: PSFramework, PSDscResources, AccessControlDSC, powershell-yaml, PSScriptAnalyzer
+
+defaults:
+  run:
+    shell: powershell
+
+jobs:
+  spec:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2019, windows-2022]
+        tag: [General, Unit]
+        include:
+          - tag: General
+            results_file: General.Results.xml
+          - tag: Unit
+            results_file: Unit.Results.xml
+
+    steps:
+      - name: "checkout"
+        uses: actions/checkout@v3
+
+      - name: "install modules"
+        uses: potatoqualitee/psmodulecache@v5.1
+        with:
+          shell: powershell
+          modules-to-cache: ${{ env.module_cache }}
+
+      - name: "configure winrm"
+        run: |
+          Write-Host 'Ensuring WinRM is configured for DSC'
+          Get-ChildItem WSMan:\localhost\Listener\ -OutVariable Listeners | Format-List * -Force
+          $HTTPListener = $Listeners | Where-Object -FilterScript { $_.Keys.Contains('Transport=HTTP') }
+          If ($HTTPListener.Count -eq 0) {
+            winrm create winrm/config/Listener?Address=*+Transport=HTTP
+            winrm e winrm/config/listener
+          }
+
+      - name: "test"
+        run: |
+          Import-Module -Name PSDesiredStateConfiguration -Force
+          Import-Module -Name .\src\Puppet.Dsc\puppet.dsc.psd1 -Force
+          $null = Get-Command -Module Puppet.Dsc
+
+          $ErrorActionPreference = "Stop"
+          $ResultsPath = "${{ matrix.results_file }}"
+          $TestPath = @(
+            (Resolve-Path .\src\Puppet.Dsc\functions)
+            (Resolve-Path .\src\Puppet.Dsc\internal\functions)
+            (Resolve-Path .\src\Puppet.Dsc\tests\general)
+          )
+          $Results = .\scripts\invoke_tests.ps1 -TestPath $TestPath -ResultsPath $ResultsPath -Tag ${{ matrix.tag }}
+          if ($Results.FailedCount -gt 0) {
+            throw "$($Results.FailedCount) tests failed."
+          }
+
+  acceptance:
+    runs-on: ${{ matrix.os }}
+    needs: "spec"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2019, windows-2022]
+        tag: [Basic]
+        pwshlib_source: [forge, git]
+        include:
+          - pwshlib_source: forge
+            pwshlib_repo: "puppetlabs/pwshlib"
+            pwshlib_ref: "latest" # Change to a specific version if desired
+            results_file: Acceptance.Forge.Results.xml
+          - pwshlib_source: git
+            pwshlib_repo: "https://github.com/puppetlabs/ruby-pwsh.git" # Change to another fork if desired
+            pwshlib_ref: main # Change to another branch if desired
+            results_file: Acceptance.Git.Results.xml
+
+    steps:
+      - name: "checkout"
+        uses: actions/checkout@v3
+
+      - name: "install modules"
+        uses: potatoqualitee/psmodulecache@v5.1
+        with:
+          shell: powershell
+          modules-to-cache: ${{ env.module_cache }}
+
+      - name: "install pdk"
+        run: |
+          choco feature disable -n=showDownloadProgress
+          choco install pdk --version ${{ env.pdk_version }} -y
+
+      - name: "configure winrm"
+        run: |
+          Write-Host 'Ensuring WinRM is configured for DSC'
+          Get-ChildItem WSMan:\localhost\Listener\ -OutVariable Listeners | Format-List * -Force
+          $HTTPListener = $Listeners | Where-Object -FilterScript { $_.Keys.Contains('Transport=HTTP') }
+          If ($HTTPListener.Count -eq 0) {
+            winrm create winrm/config/Listener?Address=*+Transport=HTTP
+            winrm e winrm/config/listener
+          }
+
+      - name: "test"
+        run: |
+          Import-Module -Name PSDesiredStateConfiguration -Force
+          Import-Module -Name .\src\Puppet.Dsc\puppet.dsc.psd1 -Force
+          $null = Get-Command -Module Puppet.Dsc
+
+          $ErrorActionPreference = "Stop"
+          $TestParameters = @{
+            TestPath         = @((Resolve-Path .\acceptance))
+            ResultsPath      = "${{ matrix.results_file }}"
+            Tag              = "${{ matrix.tag }}"
+            PwshLibSource    = "${{ matrix.pwshlib_source }}"
+            PwshLibRepo      = "${{ matrix.pwshlib_repo }}"
+            PwshLibReference = "${{ matrix.pwshlib_ref }}"
+          }
+
+          $Results = .\scripts\invoke_tests.ps1 @TestParameters
+          if ($Results.FailedCount -gt 0) {
+            throw "$($Results.FailedCount) tests failed."
+          }

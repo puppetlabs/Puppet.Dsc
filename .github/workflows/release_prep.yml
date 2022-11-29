@@ -1,0 +1,70 @@
+name: "Release Prep"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The version number for the next release."
+        required: true
+env:
+  module_cache: PSFramework, PSDscResources, powershell-yaml, PlatyPS, BuildHelpers
+
+jobs:
+  release_prep:
+    name: "release prep"
+    runs-on: "windows-latest"
+    defaults:
+      run:
+        shell: "powershell"
+
+    steps:
+
+      - name: "checkout"
+        uses: "actions/checkout@v3"
+        with:
+          clean: true
+          fetch-depth: 0
+
+      - name: "install modules"
+        uses: potatoqualitee/psmodulecache@v5.1
+        with:
+          shell: powershell
+          modules-to-cache: ${{ env.module_cache }}
+
+
+      - name: "update markdown help"
+        run: |
+          Import-Module ./src/Puppet.Dsc/puppet.dsc.psd1 -Force
+          New-MarkdownHelp -Module 'Puppet.Dsc' -OutputFolder ./docs -Force
+
+      - name: "update manifest version"
+        run: |
+          Update-Metadata -Path ./src/Puppet.Dsc/puppet.dsc.psd1 -PropertyName 'ModuleVersion' -Value ${{ github.event.inputs.version }}
+
+      - name: "generate changelog"
+        run: |
+          $ENV:GH_HOST='github.com'
+          gh extension install chelnak/gh-changelog
+          gh changelog new --next-version ${{ github.event.inputs.version }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "commit changes"
+        run: |
+          git config --local user.email "${{ github.repository_owner }}@users.noreply.github.com"
+          git config --local user.name "GitHub Actions"
+          git add .
+          git commit -m "Release prep v${{ github.event.inputs.version }}"
+
+      - name: "create pull request"
+        uses: "peter-evans/create-pull-request@v4"
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Release prep v${{ github.event.inputs.version }}"
+          branch: "release-prep"
+          delete-branch: true
+          title: "Release prep v${{ github.event.inputs.version }}"
+          base: "main"
+          body: |
+            Automated release-prep from commit ${{ github.sha }}.
+          labels: "maintenance"

@@ -1,11 +1,11 @@
-name: "puppetize"
+name: "repuppetize"
 
 on:
   workflow_dispatch:
     inputs:
       module_name:
         description: |
-          The name of the PowerShell module as it appears on the PowerShell Gallery.
+          The name of the PowerShell module as it appears on the Forge.
         required: false
 
 env:
@@ -39,14 +39,14 @@ jobs:
 
           $ModuleData = $ENV:MODULE_NAME
           if (!$ModuleData) {
-            $ModuleData = Get-ModuleData -Path ./dsc_resources.yml -UnPuppetizedOnly
+            $ModuleData = Get-ModuleData -Path ./dsc_resources.yml -PuppetizedOnly
           }
 
           $ModuleData | ConvertTo-BuildMatrix | Set-BuildMatrix
         env:
           MODULE_NAME: ${{ github.event.inputs.module_name }}
 
-  puppetize:
+  repuppetize:
     runs-on: "windows-latest"
     defaults:
       run:
@@ -83,16 +83,16 @@ jobs:
             winrm e winrm/config/listener
           }
 
-      - name: "publish module"
+      - name: "update module"
         run: |
           Import-Module -Name PSDesiredStateConfiguration -Force
           Import-Module -Name Puppet.Dsc -Force
           $null = Get-Command PDK, Publish-NewDscModuleVersion
 
-          $PublishParameters = @{
+          $UpdateForgeDscModule = @{
             ForgeNameSpace = 'dsc'
-            Name = '${{ matrix.module_name }}'
-            OnlyNewer = $true
-            MaxBuildCount = 1
+            Name = '${{ matrix.module }}'
+            LatestMajorVersionOnly = $true
+            MaximumVersionCountToRebuild = 1
           }
-          Publish-NewDscModuleVersion @PublishParameters -Verbose
+          Update-ForgeDscModule @UpdateForgeDscModule -Verbose
