@@ -84,6 +84,8 @@ jobs:
           }
 
       - name: "publish module"
+        env:
+          FORGE_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
         run: |
           Import-Module -Name PSDesiredStateConfiguration -Force
           Import-Module -Name Puppet.Dsc -Force
