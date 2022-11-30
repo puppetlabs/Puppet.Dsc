@@ -1,6 +1,7 @@
 name: "repuppetize"
 
 on:
+  workflow_call:
   workflow_dispatch:
     inputs:
       module_name:
