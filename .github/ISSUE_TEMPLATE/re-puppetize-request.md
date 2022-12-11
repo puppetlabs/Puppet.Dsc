@@ -1,9 +1,9 @@
 ---
 name: Re-Puppetize a DSC resource
 about: Use this issue to request Re-Puppetizing an existing Puppet DSC resource.
-title: "Re-Puppetize - [MODULE NAME]"
+title: Re-Puppetize - [MODULE NAME]
 labels: maintenance
-assignees: @puppetlabs/modules
+assignees: ''
 ---
 
 <!--
@@ -11,6 +11,7 @@ Note: This request only applies to DSC resources that have already been publishe
 -->
 
 ## DSC Resource name
+
 <!--
 Include the name and version as they appear on the Forge.
 For example, a request for NetworkingDsc would look like this:

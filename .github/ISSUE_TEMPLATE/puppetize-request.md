@@ -1,12 +1,13 @@
 ---
 name: Puppetize a DSC resource
 about: Use this issue to request a new Puppetized DSC resource.
-title: "Puppetize - [RESOURCE NAME]"
+title: Puppetize - [RESOURCE NAME]
 labels: maintenance
-assignees: @puppetlabs/modules
+assignees: ''
 ---
 
 ## DSC Resource name and version
+
 <!--
 Include the name and version as they appear on the PowerShell Gallery.
 For example, a request for NetworkingDsc would look like this:
