@@ -44,10 +44,12 @@ Function Get-PuppetDataType {
   )
   If (![String]::IsNullOrEmpty($DscResourceProperty.Values)) {
     # Enums are handles specially
-    $InnerText = $DscResourceProperty.Values | ForEach-Object -Process { "'$_'" }
-    $InnerText += $InnerText | ForEach-Object -Process {"$($_.toLower())" }
-    $InnerText = $InnerText | Select-Object -Unique
-    $PuppetDataTypeText = "Enum[$($InnerText -join ', ')]"
+    $InnerText = [System.Collections.ArrayList]::new()
+    $DscResourceProperty.Values | ForEach-Object -Process {
+        $null = $InnerText.Add("'$_'")
+        $null = $innerText.Add("'$($_.toLower())'")
+    }
+    $PuppetDataTypeText = "Enum[$(($InnerText | Select-Object -Unique) -join ', ')]"
   } Else {
     If (Test-EmbeddedInstance -PropertyType $DscResourceProperty.PropertyType) {
       # TODO: We SHOULD be able to walk our way to the nested data structure for these Hashes
