@@ -8,6 +8,8 @@ on:
         required: false
         default: "main"
         type: "string"
+env:
+  module_cache: PSFramework, PSDscResources, powershell-yaml, PSScriptAnalyzer, PlatyPS
 
 jobs:
   release:
@@ -26,11 +28,16 @@ jobs:
           clean: true
           fetch-depth: 0
 
+      - name: "install modules"
+        uses: potatoqualitee/psmodulecache@v5.1
+        with:
+          shell: powershell
+          modules-to-cache: ${{ env.module_cache }}
+
       - name: "get version"
         id: "get_version"
         run: |
-          Install-Module -Name PlatyPS -Scope AllUsers -Force
-          $DataFile = Import-PowerShellDataFile -Path .\src\puppet.dsc.psd1
+          $DataFile = Import-PowerShellDataFile -Path .\src\Puppet.Dsc\puppet.dsc.psd1
           Set-Content -Path $ENV:GITHUB_OUTPUT -Value "version=$($DataFile.ModuleVersion)"
 
       - name: "create release"
@@ -40,7 +47,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "publish module"
-        run: .\scripts\publish.ps1
+        run: .\scripts\publish.ps1 -Publish
+        env:
+          GALLERY_TOKEN: ${{ secrets.GALLERY_TOKEN }}
 
   repuppetize:
     name: "re-puppetize modules"
