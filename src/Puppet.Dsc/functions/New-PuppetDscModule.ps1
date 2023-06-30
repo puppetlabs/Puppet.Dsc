@@ -61,7 +61,7 @@ Function New-PuppetDscModule {
     [switch]$AllowPrerelease,
     [switch]$PassThru,
     [string]$Repository,
-    [string]$PDKTemplateRef = '2.5.0'
+    [string]$PDKTemplateRef = '3.0.0'
   )
 
   Begin {
