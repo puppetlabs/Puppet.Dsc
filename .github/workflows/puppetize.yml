@@ -9,7 +9,7 @@ on:
         required: false
 
 env:
-  pdk_version: 2.7.1.0
+  pdk_version: 3.0.0.0
   module_cache: Puppet.Dsc, PSFramework, PSDscResources, powershell-yaml
 
 jobs:
@@ -93,7 +93,7 @@ jobs:
 
           $PublishParameters = @{
             ForgeNameSpace = 'dsc'
-            Name = '${{ matrix.module_name }}'
+            Name = '${{ matrix.module }}'
             OnlyNewer = $true
             MaxBuildCount = 1
           }
