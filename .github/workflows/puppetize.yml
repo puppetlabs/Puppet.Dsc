@@ -72,6 +72,7 @@ jobs:
         run: |
           choco feature disable -n=showDownloadProgress
           choco install pdk --version ${{ env.pdk_version }} -y
+          $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."
           Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
           refreshenv
 
