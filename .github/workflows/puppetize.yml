@@ -86,13 +86,19 @@ jobs:
             winrm e winrm/config/listener
           }
 
+      - name: Start SSH session
+        uses: luchihoratiu/debug-via-ssh@main
+        with:
+          NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+          SSH_PASS: ${{ secrets.SSH_PASS }}
+
       - name: "publish module"
         env:
           FORGE_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
         run: |
           Import-Module -Name PSDesiredStateConfiguration -Force
           Import-Module -Name Puppet.Dsc -Force
-          $null = Get-Command Publish-NewDscModuleVersion
+          $null = Get-Command PDK, Publish-NewDscModuleVersion
 
           $PublishParameters = @{
             ForgeNameSpace = 'dsc'
