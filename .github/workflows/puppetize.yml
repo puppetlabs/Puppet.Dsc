@@ -75,7 +75,6 @@ jobs:
           $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."
           Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
           refreshenv
-          . $profile
 
       - name: "configure winrm"
         run: |
@@ -97,6 +96,7 @@ jobs:
         env:
           FORGE_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
         run: |
+          refreshenv
           Import-Module -Name PSDesiredStateConfiguration -Force
           Import-Module -Name Puppet.Dsc -Force
           $null = Get-Command PDK, Publish-NewDscModuleVersion
