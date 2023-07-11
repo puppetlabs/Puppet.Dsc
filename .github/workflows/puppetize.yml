@@ -96,6 +96,7 @@ jobs:
         env:
           FORGE_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
         run: |
+          Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
           refreshenv
           Import-Module -Name PSDesiredStateConfiguration -Force
           Import-Module -Name Puppet.Dsc -Force
