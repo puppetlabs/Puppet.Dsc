@@ -113,7 +113,7 @@ Function New-PuppetDscModule {
         $ErrorActionPreference = 'Stop'
         # Scaffold the module via the PDK
         Write-PSFMessage -Message 'Initializing the Puppet Module'
-        Initialize-PuppetModule -OutputFolderPath $OutputDirectory -PuppetModuleName $PuppetModuleName -PDKTemplateRef $PDKTemplateRef -verbose
+        Initialize-PuppetModule -OutputFolderPath $OutputDirectory -PuppetModuleName $PuppetModuleName -PDKTemplateRef '3.0.0' -verbose
 
         # Vendor the PowerShell module and all of its dependencies
         Write-PSFMessage -Message 'Vendoring the DSC Resources'
