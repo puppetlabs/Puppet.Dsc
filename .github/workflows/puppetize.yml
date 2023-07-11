@@ -98,7 +98,7 @@ jobs:
         run: |
           Import-Module -Name PSDesiredStateConfiguration -Force
           Import-Module -Name Puppet.Dsc -Force
-          Get-Command PDK, Publish-NewDscModuleVersion
+          powershell -command "Get-Command PDK, Publish-NewDscModuleVersion"
 
           $PublishParameters = @{
             ForgeNameSpace = 'dsc'
