@@ -30,7 +30,7 @@ function Initialize-PuppetModule {
   )
 
   begin {
-    $Command = "pdk new module $PuppetModuleName --skip-interview --template-url https://github.com/puppetlabs/pdk-templates"
+    $Command = "pdk new module $PuppetModuleName --skip-interview --template-url https://github.com/puppetlabs/pdk-templates --template-ref 3.0.0"
     if ($PSBoundParameters.ContainsKey('PDKTemplateRef')) {
       $Command = "$Command --template-ref 3.0.0"
     }
