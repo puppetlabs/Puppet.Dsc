@@ -63,7 +63,6 @@ Function New-PuppetDscModule {
     [string]$Repository,
     [string]$PDKTemplateRef = '3.0.0'
   )
-  
 
   Begin {
     # Unless specified, use a valid Puppet module name
