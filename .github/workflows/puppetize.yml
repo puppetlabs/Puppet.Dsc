@@ -99,7 +99,7 @@ jobs:
           Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
           refreshenv
           Import-Module -Name PSDesiredStateConfiguration -Force
-          Import-Module -Name Puppet.Dsc -Force
+          Import-Module -Name ./src/Puppet.Dsc -Force
           $null = Get-Command PDK, Publish-NewDscModuleVersion
 
           $PublishParameters = @{
