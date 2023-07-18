@@ -128,9 +128,10 @@ Function Publish-NewDscModuleVersion {
           }
           If (![string]::IsNullOrEmpty($BuildFolderPath)) { $PuppetizeParameters.OutputDirectory = $BuildFolderPath }
           Write-PSFMessage -Level Verbose -Message "Puppetizing with:`r`n$($PuppetizeParameters | ConvertTo-Json)"
+          Write-Output "...debugging3..."
           $ModuleFolderPath = New-PuppetDscModule @PuppetizeParameters |
             Select-Object -ExpandProperty FullName
-          Write-Output "...debugging3..."
+          Write-Output "...debugging4..."
           $PuppetizedVersion = Get-Content -Path "$ModuleFolderPath/metadata.json" -Raw |
             ConvertFrom-Json |
             Select-Object -ExpandProperty 'version'
