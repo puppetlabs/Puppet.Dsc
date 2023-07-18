@@ -130,6 +130,7 @@ Function Publish-NewDscModuleVersion {
           Write-PSFMessage -Level Verbose -Message "Puppetizing with:`r`n$($PuppetizeParameters | ConvertTo-Json)"
           $ModuleFolderPath = New-PuppetDscModule @PuppetizeParameters |
             Select-Object -ExpandProperty FullName
+          Write-Output "...debugging3..."
           $PuppetizedVersion = Get-Content -Path "$ModuleFolderPath/metadata.json" -Raw |
             ConvertFrom-Json |
             Select-Object -ExpandProperty 'version'
