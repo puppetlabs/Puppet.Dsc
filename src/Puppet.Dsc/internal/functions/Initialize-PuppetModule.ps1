@@ -52,7 +52,6 @@ function Initialize-PuppetModule {
           Remove-Item -Path $ModuleFolderPath -Force -Recurse
         }
       }
-      Write-Output "Debugging... Command: $($Command)"
       Invoke-PdkCommand -Path $OutputFolderPath -Command $Command -SuccessFilterScript {
         $_ -match "Module '$PuppetModuleName' generated at path"
       }
