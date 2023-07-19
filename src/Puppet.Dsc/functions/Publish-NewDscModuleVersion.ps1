@@ -127,8 +127,6 @@ Function Publish-NewDscModuleVersion {
             PassThru                = $true
           }
           If (![string]::IsNullOrEmpty($BuildFolderPath)) { $PuppetizeParameters.OutputDirectory = $BuildFolderPath }
-          Write-Output "PDK version: $(pdk --version)"
-          Write-Output "Ruby and Puppet versions: $(pdk bundle exec ruby -v)"
           Write-PSFMessage -Level Verbose -Message "Puppetizing with:`r`n$($PuppetizeParameters | ConvertTo-Json)"
           $ModuleFolderPath = New-PuppetDscModule @PuppetizeParameters |
             Select-Object -Property Name

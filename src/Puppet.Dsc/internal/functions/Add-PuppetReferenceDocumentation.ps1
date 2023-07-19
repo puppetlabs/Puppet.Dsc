@@ -28,6 +28,7 @@ function Add-PuppetReferenceDocumentation {
       Invoke-PdkCommand -Path $PuppetModuleFolderPath -Command $Command -SuccessFilterScript {
         $_ -match '% documented'
       }
+      Invoke-PdkCommand -Path $PuppetModuleFolderPath -Command 'pdk bundle exec ruby -v'
       # Verify REFERENCE.md file is generated
       $ReferenceFile = Join-Path -Path $PuppetModuleFolderPath -ChildPath REFERENCE.md
       $null = Resolve-Path $ReferenceFile
