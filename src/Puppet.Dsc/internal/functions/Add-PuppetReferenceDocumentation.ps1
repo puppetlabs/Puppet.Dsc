@@ -25,7 +25,6 @@ function Add-PuppetReferenceDocumentation {
   process {
     Try {
       $ErrorActionPreference = 'Stop'
-      Write-Output "Ruby and Puppet versions: $(pdk bundle exec ruby -v)"
       Invoke-PdkCommand -Path $PuppetModuleFolderPath -Command $Command -SuccessFilterScript {
         $_ -match '% documented'
       }
