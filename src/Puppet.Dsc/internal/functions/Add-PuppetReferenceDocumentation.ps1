@@ -20,11 +20,12 @@ function Add-PuppetReferenceDocumentation {
 
   begin {
     $PuppetModuleFolderPath = Resolve-Path -Path $PuppetModuleFolderPath -ErrorAction Stop
-    $Command = 'pdk --version -and pdk bundle exec ruby -v -and pdk bundle exec puppet strings generate --format markdown --out REFERENCE.md'
+    $Command = 'pdk bundle exec puppet strings generate --format markdown --out REFERENCE.md'
   }
   process {
     Try {
       $ErrorActionPreference = 'Stop'
+      Write-Output "Ruby and Puppet versions: $(pdk ruby -v)"
       Invoke-PdkCommand -Path $PuppetModuleFolderPath -Command $Command -SuccessFilterScript {
         $_ -match '% documented'
       }
