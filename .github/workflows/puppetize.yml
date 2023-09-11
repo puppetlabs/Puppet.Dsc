@@ -1,6 +1,8 @@
 name: "puppetize"
 
 on:
+  schedule:
+    - cron: "0 6 1,15 * *" 
   workflow_dispatch:
     inputs:
       module_name:
