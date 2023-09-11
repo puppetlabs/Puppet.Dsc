@@ -37,10 +37,11 @@ jobs:
         run: |
           Import-Module -Name PSDesiredStateConfiguration -Force
           Import-Module -Name ./src/BuildMatrix/BuildMatrix.psd1 -Force
+          $fileName = "./dsc_resources.yml"
 
           $ModuleData = $ENV:MODULE_NAME
           if (!$ModuleData) {
-            $ModuleData = Get-ModuleData -Path ./dsc_resources.yml -PuppetizedOnly
+            $ModuleData = Get-ModuleData -Path $fileName -PuppetizedOnly
           }
 
           $ModuleData | ConvertTo-BuildMatrix | Set-BuildMatrix
