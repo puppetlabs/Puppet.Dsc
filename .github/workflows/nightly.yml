@@ -1,15 +1,11 @@
-name: CI
+name: nightly
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  schedule:
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 env:
-  pdk_version: 2.5.0.0
+  pdk_version: 3.0.0.0
   module_cache: PSFramework, PSDscResources, AccessControlDSC, powershell-yaml, PSScriptAnalyzer
 
 defaults:
