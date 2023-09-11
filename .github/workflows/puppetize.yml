@@ -38,7 +38,7 @@ jobs:
         run: |
           Import-Module -Name PSDesiredStateConfiguration -Force
           Import-Module -Name ./src/BuildMatrix/BuildMatrix.psd1 -Force
-          $response = Invoke-WebRequest -URI https://forgeapi.puppet.com/v3/modules?owner=dsc`&limit=50 -Method Get -UseBasicParsing
+          $response = Invoke-WebRequest -URI https://forgeapi.puppet.com/v3/modules?owner=dsc`&limit=50`&endorsements=approved`&sort_by=downloads -Method Get -UseBasicParsing
           $parsed = $response.Content | ConvertFrom-Json
           $fileName = "./dsc_resources.yml"
 
