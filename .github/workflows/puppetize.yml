@@ -36,10 +36,21 @@ jobs:
         run: |
           Import-Module -Name PSDesiredStateConfiguration -Force
           Import-Module -Name ./src/BuildMatrix/BuildMatrix.psd1 -Force
+          $response = Invoke-WebRequest -URI https://forgeapi.puppet.com/v3/modules?owner=dsc`&limit=50 -Method Get -UseBasicParsing
+          $parsed = $response.Content | ConvertFrom-Json
+          $fileName = "./dsc_resources.yml"
+
+          ForEach ($Module in $parsed.results.name) {
+            $module_name_exists =  Select-String -Quiet -Pattern $Module -Path $fileName
+            if (-not $module_name_exists)
+            {
+              Add-Content -Path $fileName -Value "  - name: $Module"
+            }
+          }
 
           $ModuleData = $ENV:MODULE_NAME
           if (!$ModuleData) {
-            $ModuleData = Get-ModuleData -Path ./dsc_resources.yml -UnPuppetizedOnly
+            $ModuleData = Get-ModuleData -Path $fileName -UnPuppetizedOnly
           }
 
           $ModuleData | ConvertTo-BuildMatrix | Set-BuildMatrix
