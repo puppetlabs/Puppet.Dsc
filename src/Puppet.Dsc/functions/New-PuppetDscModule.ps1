@@ -165,6 +165,7 @@ Function New-PuppetDscModule {
           }
           Out-Utf8File -Path $PuppetProviderFilePath -InputObject $Resource.Provider
         }
+        Invoke-BundleInstall -PuppetModuleFolderPath $PuppetModuleRootFolderDirectory -Verbose
 
         # Generate REFERENCE.md file for the Puppet module from the auto-generated types for each DSC resource
         Write-PSFMessage -Message 'Writing the reference documentation for the Puppet module'
