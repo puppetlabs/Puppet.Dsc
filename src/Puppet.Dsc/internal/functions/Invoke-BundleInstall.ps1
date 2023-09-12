@@ -21,11 +21,7 @@ function Invoke-BundleInstall {
     Try {
       $ErrorActionPreference = 'Stop'
       Invoke-PdkCommand -Path $PuppetModuleFolderPath -Command $Command -SuccessFilterScript {
-<<<<<<< HEAD
-        $_ -match 'Bundle complete!'
-=======
         $_ -match "Bundle complete!"
->>>>>>> 3f13b62 ((CAT-1322) - Update Function Success Criteria)
       }
     } Catch {
       $PSCmdlet.ThrowTerminatingError($PSItem)
