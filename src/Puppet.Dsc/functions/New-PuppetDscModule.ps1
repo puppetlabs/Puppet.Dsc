@@ -169,7 +169,7 @@ Function New-PuppetDscModule {
         # Generate REFERENCE.md file for the Puppet module from the auto-generated types for each DSC resource
         Write-PSFMessage -Message 'Writing the reference documentation for the Puppet module'
         Set-PSModulePath -Path $InitialPsModulePath
-        Install-Gems -PuppetModuleFolderPath $PuppetModuleRootFolderDirectory -Verbose
+        Invoke-BundleInstall -PuppetModuleFolderPath $PuppetModuleRootFolderDirectory -Verbose
         Add-PuppetReferenceDocumentation -PuppetModuleFolderPath $PuppetModuleRootFolderDirectory -Verbose
 
         If ($PassThru) {

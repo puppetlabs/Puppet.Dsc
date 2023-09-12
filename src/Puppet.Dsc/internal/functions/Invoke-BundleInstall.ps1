@@ -1,4 +1,4 @@
-function Install-Gems {
+function Invoke-BundleInstall {
   <#
       .SYNOPSIS
         Install required gems
