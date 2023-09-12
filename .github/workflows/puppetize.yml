@@ -38,10 +38,12 @@ jobs:
         run: |
           Import-Module -Name PSDesiredStateConfiguration -Force
           Import-Module -Name ./src/BuildMatrix/BuildMatrix.psd1 -Force
+          # Get the top 50 downloaded DSC modules from the forge
           $response = Invoke-WebRequest -URI https://forgeapi.puppet.com/v3/modules?owner=dsc`&limit=50`&endorsements=approved`&sort_by=downloads -Method Get -UseBasicParsing
           $parsed = $response.Content | ConvertFrom-Json
           $fileName = "./dsc_resources.yml"
 
+          # Add the module to the dsc_resource.yml if it doesn't exist
           ForEach ($Module in $parsed.results.name) {
             $module_name_exists =  Select-String -Quiet -Pattern $Module -Path $fileName
             if (-not $module_name_exists)
