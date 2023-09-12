@@ -21,7 +21,7 @@ function Invoke-BundleInstall {
     Try {
       $ErrorActionPreference = 'Stop'
       Invoke-PdkCommand -Path $PuppetModuleFolderPath -Command $Command -SuccessFilterScript {
-        $_ -match 'gems now installed'
+        $_ -match 'Bundle complete!'
       }
     } Catch {
       $PSCmdlet.ThrowTerminatingError($PSItem)
