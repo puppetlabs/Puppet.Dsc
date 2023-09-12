@@ -1,4 +1,5 @@
 resources:
+  - name: 7ZipArchiveDsc
   - name: ActiveDirectoryDsc
   - name: AuditPolicyDsc
   - name: CertificateDsc
