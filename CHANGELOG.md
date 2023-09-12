@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [1.0.6](https://github.com/puppetlabs/Puppet.Dsc/tree/1.0.6) - 2023-08-25
+
+[Full Changelog](https://github.com/puppetlabs/Puppet.Dsc/compare/1.0.5...1.0.6)
+
+### Fixed
+
+- (maint) - Update PDK Install [#257](https://github.com/puppetlabs/Puppet.Dsc/pull/257) ([jordanbreen28](https://github.com/jordanbreen28))
+
 ## [1.0.5](https://github.com/puppetlabs/Puppet.Dsc/tree/1.0.5) - 2023-01-24
 
 [Full Changelog](https://github.com/puppetlabs/Puppet.Dsc/compare/1.0.4...1.0.5)

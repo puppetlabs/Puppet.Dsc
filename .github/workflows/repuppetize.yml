@@ -10,7 +10,7 @@ on:
         required: false
 
 env:
-  pdk_version: 2.5.0.0
+  pdk_version: 3.0.0.0
   module_cache: Puppet.Dsc, PSFramework, PSDscResources, powershell-yaml
 
 jobs:
