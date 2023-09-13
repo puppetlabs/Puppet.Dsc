@@ -114,6 +114,8 @@ jobs:
 
       - name: "test"
         run: |
+          Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
+          refreshenv
           Import-Module -Name PSDesiredStateConfiguration -Force
           Import-Module -Name .\src\Puppet.Dsc\puppet.dsc.psd1 -Force
           $null = Get-Command -Module Puppet.Dsc
