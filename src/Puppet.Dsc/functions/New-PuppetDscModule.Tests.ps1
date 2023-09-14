@@ -40,6 +40,7 @@ Describe 'New-PuppetDscModule' -Tag 'Unit' {
         }
         Mock Test-Path { $true }
         Mock Out-Utf8File {}
+        Mock Invoke-BundleInstall {}
         Mock Add-PuppetReferenceDocumentation {}
         Mock Get-Item {}
 

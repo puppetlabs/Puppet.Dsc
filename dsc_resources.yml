@@ -1,4 +1,5 @@
 resources:
+  - name: 7ZipArchiveDsc
   - name: ActiveDirectoryDsc
   - name: AuditPolicyDsc
   - name: CertificateDsc
@@ -18,6 +19,14 @@ resources:
   - name: UpdateServicesDsc
   - name: xCredSSP
   - name: xExchange
+  - name: xHyper-V
   - name: xPSDesiredStateConfiguration
   - name: WebAdministrationDsc
   - name: WSManDsc
+
+# the below modules will need to remain with in this file, commented out, as there is a mismatch between their naming on the forge and PS Gallery.
+# their names, as they appear on PSGallery, are added to the default list above.
+# a7ziparchivedsc
+# xhyper_v
+# xphp (this module is broke upstream and will not be included in the default list see https://github.com/dsccommunity/xPhp/issues/13. 
+# Its worth noting that the latest version is already on the forge, and that it is also no longer maintained.)
