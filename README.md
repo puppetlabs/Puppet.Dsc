@@ -1,5 +1,9 @@
 # Puppet.Dsc
 
+[![Code Owners](https://img.shields.io/badge/owners-DevX--team-blue)](https://github.com/puppetlabs/pdk/blob/main/CODEOWNERS)
+![ci](https://github.com/puppetlabs/Puppet.Dsc/actions/workflows/ci.yml/badge.svg)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/puppetlabs/Puppet.Dsc)
+
 This PowerShell module downloads DSC Resources from the PSGallery and then builds a Puppet Module containing parsed Puppet types. Similar to the puppetlabs-dsc module, it contains the source DSC Resource as well as the Puppet type, but is configurable to only have the DSC Resources you specify. This reduces the size of the module and allows different deployment scenarios.
 
 This will run periodically to automatically convert and publish DSC resources to the [Puppet Forge `dsc` namespace](https://forge.puppet.com/dsc).
