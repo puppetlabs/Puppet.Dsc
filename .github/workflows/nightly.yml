@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env:
-  pdk_version: 3.0.0.0
+  pdk_version: 2.7.1.0
   module_cache: PSFramework, PSDscResources, AccessControlDSC, powershell-yaml, PSScriptAnalyzer
 
 defaults:
