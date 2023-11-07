@@ -39,6 +39,9 @@ $(
     # Assemble the Description String with appropriate indentation
     "      desc: $(ConvertTo-PuppetRubyString -String ($Parameter.Help.Split("`n") -Join ' ')),"
   }
+    If (![string]::IsNullOrEmpty($Parameter.DefaultValue)) {
+    "      default: $($Parameter.DefaultValue),"
+  }
 )
 $(
   $Behaviours = @()

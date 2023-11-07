@@ -41,7 +41,7 @@ function Get-TypeContent {
       $NotEnsurable = [pscustomobject]@{
         Name              = 'ensurable'
         DefaultValue      = 'false'
-        Type              = "Enum['False', 'false']"
+        Type              = "Boolean['false']"
         Help              = 'Default attribute added to all dsc types without an ensure property. This resource is not ensurable.'
         mandatory_for_get = 'false'
         mandatory_for_set = 'false'
