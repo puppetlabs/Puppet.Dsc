@@ -39,10 +39,10 @@ $(
     # Assemble the Description String with appropriate indentation
     "      desc: $(ConvertTo-PuppetRubyString -String ($Parameter.Help.Split("`n") -Join ' ')),"
   }
-    If (![string]::IsNullOrEmpty($Parameter.DefaultValue)) {
-    "      default: $($Parameter.DefaultValue),"
-  }
 )
+$(    If (![string]::IsNullOrEmpty($Parameter.DefaultValue)) {
+    "      default: $($Parameter.DefaultValue),"
+})
 $(
   $Behaviours = @()
   If ($Parameter.is_namevar -eq 'true') { $Behaviours += ':namevar' }
