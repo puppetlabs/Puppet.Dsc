@@ -36,6 +36,24 @@ function Get-TypeContent {
       } Else {
         $FriendlyName = $Resource.FriendlyName
       }
+      # We add an ensurable property to all DSC resources that don't have an ensure property
+      $ResourceIsEnsurable = ($Resource.ParameterInfo | Select-Object -ExpandProperty Name).Contains('ensure')
+      $NotEnsurable = [pscustomobject]@{
+        Name              = 'ensurable'
+        DefaultValue      = 'false'
+        Type              = 'Boolean[false]'
+        Help              = 'Default attribute added to all dsc types without an ensure property. This resource is not ensurable.'
+        mandatory_for_get = 'false'
+        mandatory_for_set = 'false'
+        is_parameter      = 'false'
+        is_namevar        = 'false'
+        mof_is_embedded   = 'false'
+        mof_type          = 'String'
+      }
+      # We only add the ensurable property if it's not already present
+      If (!$ResourceIsEnsurable) {
+        $Resource.ParameterInfo += $NotEnsurable
+      }
       # It is not *currently* possible to reliably programmatically retrieve
       # the description information for a DSC Resource via CIM instances or
       # Get-DscResource or Get-Help.

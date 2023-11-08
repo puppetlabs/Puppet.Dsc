@@ -24,8 +24,11 @@ Function Get-TypeParameterContent {
 
   ForEach ($Parameter in $ParameterInfo) {
     if (![string]::IsNullOrEmpty($Parameter.name)) {
+      if ($Parameter.name -ne 'ensurable') {
+        $Parameter.name = "dsc_$($Parameter.name)"
+      }
       New-Object -TypeName System.String @"
-    dsc_$($Parameter.name): {
+    $($Parameter.name): {
       type: $(ConvertTo-PuppetRubyString -String ($Parameter.Type -split "`n" -join "`n            ")),
 $(
   If ([string]::IsNullOrEmpty($Parameter.Help)) {
@@ -37,6 +40,9 @@ $(
     "      desc: $(ConvertTo-PuppetRubyString -String ($Parameter.Help.Split("`n") -Join ' ')),"
   }
 )
+$(    If (![string]::IsNullOrEmpty($Parameter.DefaultValue)) {
+    "      default: $($Parameter.DefaultValue),"
+})
 $(
   $Behaviours = @()
   If ($Parameter.is_namevar -eq 'true') { $Behaviours += ':namevar' }
