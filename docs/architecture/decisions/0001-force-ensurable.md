@@ -9,7 +9,7 @@ Accepted
 ## Context
 
 In CAT-1484, it was found that there was a mismatch in behaviour between dsc resource keys and puppet namevars. It was widely assumed that these two attribute types eseentially behaved the same, which was found not to be the case with the dsc_virtualmemory resource (and others) in the ComputerManagementDsc module.
-Puppet uses namevars as identifiers, so when a manifest is passed containing only namevar attributes, puppet will ignore the updating values in a manifest and not attempt to update the resource, However, DSC will update the dsc resource when only key attributes as passed.
+Puppet uses namevars as identifiers, so when a manifest is passed containing only namevar attributes, puppet will ignore the updating values in a manifest and not attempt to update the resource, For example, the Puppet File resource has a single namevar equal to the path of the resource, say "/tmp/foo1.txt".  If this namevar is changed to something like "/tmp/foo2.txt", then the original resource identified by the namevar will not be updated or changed; a new File resource will instead be created.  In similar fashion, DSC uniquely identifies its resources with namevars and will update the dsc resource only when key attributes are passed.
 
 So although they appear the same on the surface, it was found that the below manifest and .mof file **would not** produce the same outcome on the target machine.
 
