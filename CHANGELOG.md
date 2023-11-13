@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [2.0.0](https://github.com/puppetlabs/Puppet.Dsc/tree/2.0.0) - 2023-11-13
+
+[Full Changelog](https://github.com/puppetlabs/Puppet.Dsc/compare/1.0.6...2.0.0)
+
+### Changed
+- (CAT-1454) - Add Puppet 8/Drop Puppet 6 [#273](https://github.com/puppetlabs/Puppet.Dsc/pull/273) ([jordanbreen28](https://github.com/jordanbreen28))
+- (CAT-1484) - Add ensurable property to resource [#269](https://github.com/puppetlabs/Puppet.Dsc/pull/269) ([jordanbreen28](https://github.com/jordanbreen28))
+
 ## [1.0.6](https://github.com/puppetlabs/Puppet.Dsc/tree/1.0.6) - 2023-08-25
 
 [Full Changelog](https://github.com/puppetlabs/Puppet.Dsc/compare/1.0.5...1.0.6)
