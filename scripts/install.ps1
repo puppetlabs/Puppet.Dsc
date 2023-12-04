@@ -10,6 +10,8 @@ $PowerShellModules = @(
   @{ Name = 'powershell-yaml' }
   @{ Name = 'PSScriptAnalyzer' }
   @{ Name = 'xPSDesiredStateConfiguration' }
+  @{ Name = 'PSDscResources' }
+  @{ Name = 'PowerShellGet'}
   @{ Name = 'Pester'}
 )
 
