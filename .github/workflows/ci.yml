@@ -11,6 +11,8 @@ on:
 env:
   pdk_version: 2.7.1.0
   module_cache: PSFramework, PSDscResources, AccessControlDSC, powershell-yaml, PSScriptAnalyzer
+  COVERAGE_ENABLED: 'yes'
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 defaults:
   run:
@@ -67,6 +69,16 @@ jobs:
           if ($Results.FailedCount -gt 0) {
             throw "$($Results.FailedCount) tests failed."
           }
+
+      - name: Upload coverage reports to Codecov
+        # Only upload report once per CI run
+        if: matrix.os == 'windows-2022' && matrix.tag == 'Unit'
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          fail_ci_if_error: true
+          verbose: true
 
   acceptance:
     runs-on: ${{ matrix.os }}
