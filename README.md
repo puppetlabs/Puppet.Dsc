@@ -20,7 +20,7 @@ Lets go through the workflow for building the Puppet Module.
 
 ```powershell
 New-PuppetDscModule -PowerShellModuleName 'PowerShellGet' -PowerShellModuleVersion '2.1.3'  -PuppetModuleAuthor 'testuser' -OutputDirectory '../bar'
-```
+``ddddd`
 
 This function will create a new Puppet module, powershellget, which vendors and puppetizes the PowerShellGet PowerShell module at version 2.2.3 and its dependencies, exposing the DSC resources as Puppet resources.
 By default, it will fetch from the public PSGallery but this behavior can be overridden,.
