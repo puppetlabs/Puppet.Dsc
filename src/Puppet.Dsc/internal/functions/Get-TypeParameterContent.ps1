@@ -24,11 +24,8 @@ Function Get-TypeParameterContent {
 
   ForEach ($Parameter in $ParameterInfo) {
     if (![string]::IsNullOrEmpty($Parameter.name)) {
-      if ($Parameter.name -ne 'ensurable') {
-        $Parameter.name = "dsc_$($Parameter.name)"
-      }
       New-Object -TypeName System.String @"
-    $($Parameter.name): {
+    dsc_$($Parameter.name): {
       type: $(ConvertTo-PuppetRubyString -String ($Parameter.Type -split "`n" -join "`n            ")),
 $(
   If ([string]::IsNullOrEmpty($Parameter.Help)) {
