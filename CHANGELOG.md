@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [2.0.1](https://github.com/puppetlabs/Puppet.Dsc/tree/2.0.1) - 2024-02-12
+
+[Full Changelog](https://github.com/puppetlabs/Puppet.Dsc/compare/2.0.0...2.0.1)
+
+### Fixed
+
+- (REVERT) - Revert forcing of ensurable property on resources [#283](https://github.com/puppetlabs/Puppet.Dsc/pull/283) ([jordanbreen28](https://github.com/jordanbreen28))
+- (maint) - Add PSDscResources & PowerShellGet to install.ps1 [#277](https://github.com/puppetlabs/Puppet.Dsc/pull/277) ([jordanbreen28](https://github.com/jordanbreen28))
+
 ## [2.0.0](https://github.com/puppetlabs/Puppet.Dsc/tree/2.0.0) - 2023-11-13
 
 [Full Changelog](https://github.com/puppetlabs/Puppet.Dsc/compare/1.0.6...2.0.0)
