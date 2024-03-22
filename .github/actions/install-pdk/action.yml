@@ -1,0 +1,27 @@
+# .github/actions/install-pdk/action.yml
+name: 'Install PDK'
+description: 'Installs winget and PDK'
+inputs:
+  GITHUB_TOKEN:
+    description: 'GitHub token'
+    required: true
+  pdk_version:
+    description: 'PDK version to install'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    # The following winget install works ON 2022 but not 2019
+    # - name: Install winget
+    #   uses: Cyberboss/install-winget@v1
+    #   with:
+    #     GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+    # - name: Install PDK
+    #   run: |
+    #     winget install pdk --version=${{ inputs.pdk_version }} --silent --accept-source-agreements
+    #   shell: powershell
+    - name: Install PDK
+      run: |
+        choco feature disable -n=showDownloadProgress
+        choco install pdk --version ${{ env.pdk_version }} -y
+      shell: powershell

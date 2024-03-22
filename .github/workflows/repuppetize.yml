@@ -10,7 +10,7 @@ on:
         required: false
 
 env:
-  pdk_version: 2.7.1.0
+  pdk_version: 3.0.1
   module_cache: PSFramework, PSDscResources, powershell-yaml
 
 jobs:
@@ -70,11 +70,11 @@ jobs:
           shell: powershell
           modules-to-cache: ${{ env.module_cache }}
 
-      - name: "install pdk"
-        run: |
-          choco feature disable -n=showDownloadProgress
-          choco install pdk --version ${{ env.pdk_version }} -y
-
+      - name: Install PDK
+        uses: ./.github/actions/install-pdk
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          pdk_version: ${{ env.pdk_version }}
       - name: "configure winrm"
         run: |
           Write-Host 'Ensuring WinRM is configured for DSC'
