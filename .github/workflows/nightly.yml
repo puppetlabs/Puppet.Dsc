@@ -5,7 +5,6 @@ on:
   workflow_dispatch:
 
 env:
-  pdk_version: 2.7.1.0
   module_cache: PSFramework, PSDscResources, AccessControlDSC, powershell-yaml, PSScriptAnalyzer
 
 defaults:
@@ -93,10 +92,8 @@ jobs:
           shell: powershell
           modules-to-cache: ${{ env.module_cache }}
 
-      - name: "install pdk"
-        run: |
-          choco feature disable -n=showDownloadProgress
-          choco install pdk --version ${{ env.pdk_version }} -y
+      - name: Install PDK
+        uses: ./.github/actions/install-pdk
 
       - name: "configure winrm"
         run: |
