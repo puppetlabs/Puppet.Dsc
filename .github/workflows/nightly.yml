@@ -35,33 +35,11 @@ jobs:
           shell: powershell
           modules-to-cache: ${{ env.module_cache }}
 
-      - name: "configure winrm"
-        run: |
-          Write-Host 'Ensuring WinRM is configured for DSC'
-          Get-ChildItem WSMan:\localhost\Listener\ -OutVariable Listeners | Format-List * -Force
-          $HTTPListener = $Listeners | Where-Object -FilterScript { $_.Keys.Contains('Transport=HTTP') }
-          If ($HTTPListener.Count -eq 0) {
-            winrm create winrm/config/Listener?Address=*+Transport=HTTP
-            winrm e winrm/config/listener
-          }
+      - name: Configure WinRM
+        uses: ./.github/actions/configure-winrm
 
-      - name: "test"
-        run: |
-          Import-Module -Name PSDesiredStateConfiguration -Force
-          Import-Module -Name .\src\Puppet.Dsc\puppet.dsc.psd1 -Force
-          $null = Get-Command -Module Puppet.Dsc
-
-          $ErrorActionPreference = "Stop"
-          $ResultsPath = "${{ matrix.results_file }}"
-          $TestPath = @(
-            (Resolve-Path .\src\Puppet.Dsc\functions)
-            (Resolve-Path .\src\Puppet.Dsc\internal\functions)
-            (Resolve-Path .\src\Puppet.Dsc\tests\general)
-          )
-          $Results = .\scripts\invoke_tests.ps1 -TestPath $TestPath -ResultsPath $ResultsPath -Tag ${{ matrix.tag }}
-          if ($Results.FailedCount -gt 0) {
-            throw "$($Results.FailedCount) tests failed."
-          }
+      - name: Run Unit Tests
+        uses: ./.github/actions/run-unit-tests
 
   acceptance:
     runs-on: ${{ matrix.os }}
@@ -95,35 +73,8 @@ jobs:
       - name: Install PDK
         uses: ./.github/actions/install-pdk
 
-      - name: "configure winrm"
-        run: |
-          Write-Host 'Ensuring WinRM is configured for DSC'
-          Get-ChildItem WSMan:\localhost\Listener\ -OutVariable Listeners | Format-List * -Force
-          $HTTPListener = $Listeners | Where-Object -FilterScript { $_.Keys.Contains('Transport=HTTP') }
-          If ($HTTPListener.Count -eq 0) {
-            winrm create winrm/config/Listener?Address=*+Transport=HTTP
-            winrm e winrm/config/listener
-          }
+      - name: Configure WinRM
+        uses: ./.github/actions/configure-winrm
 
-      - name: "test"
-        run: |
-          Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
-          refreshenv
-          Import-Module -Name PSDesiredStateConfiguration -Force
-          Import-Module -Name .\src\Puppet.Dsc\puppet.dsc.psd1 -Force
-          $null = Get-Command -Module Puppet.Dsc
-
-          $ErrorActionPreference = "Stop"
-          $TestParameters = @{
-            TestPath         = @((Resolve-Path .\acceptance))
-            ResultsPath      = "${{ matrix.results_file }}"
-            Tag              = "${{ matrix.tag }}"
-            PwshLibSource    = "${{ matrix.pwshlib_source }}"
-            PwshLibRepo      = "${{ matrix.pwshlib_repo }}"
-            PwshLibReference = "${{ matrix.pwshlib_ref }}"
-          }
-
-          $Results = .\scripts\invoke_tests.ps1 @TestParameters
-          if ($Results.FailedCount -gt 0) {
-            throw "$($Results.FailedCount) tests failed."
-          }
+      - name: Run Acceptance Tests
+        uses: ./.github/actions/run-acceptance-tests
