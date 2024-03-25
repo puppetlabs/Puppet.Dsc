@@ -10,6 +10,13 @@ This will run periodically to automatically convert and publish DSC resources to
 
 [![Puppetize](https://github.com/puppetlabs/Puppet.Dsc/actions/workflows/puppetize.yml/badge.svg)](https://github.com/puppetlabs/Puppet.Dsc/actions/workflows/puppetize.yml)
 
+## Design Decisions
+
+<!-- adrlog -->
+
+* [ADR-0001](docs/adr/0001-dry-up-duplicated-code-in-github-actions.md) - Dry up duplicated code in github actions
+
+<!-- adrlogstop -->
 
 ## Converting a Module from the Public Gallery
 

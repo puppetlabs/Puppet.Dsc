@@ -1,0 +1,24 @@
+---
+name: 'Run Unit Tests'
+description: 'Run Unit Tests'
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Unit Tests
+      run: |
+        Import-Module -Name PSDesiredStateConfiguration -Force
+        Import-Module -Name .\src\Puppet.Dsc\puppet.dsc.psd1 -Force
+        $null = Get-Command -Module Puppet.Dsc
+
+        $ErrorActionPreference = "Stop"
+        $ResultsPath = "${{ matrix.results_file }}"
+        $TestPath = @(
+          (Resolve-Path .\src\Puppet.Dsc\functions)
+          (Resolve-Path .\src\Puppet.Dsc\internal\functions)
+          (Resolve-Path .\src\Puppet.Dsc\tests\general)
+        )
+        $Results = .\scripts\invoke_tests.ps1 -TestPath $TestPath -ResultsPath $ResultsPath -Tag ${{ matrix.tag }}
+        if ($Results.FailedCount -gt 0) {
+          throw "$($Results.FailedCount) tests failed."
+        }
+      shell: powershell

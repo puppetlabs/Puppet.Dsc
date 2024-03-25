@@ -11,7 +11,6 @@ on:
         required: false
 
 env:
-  pdk_version: 2.7.1.0
   module_cache: PSFramework, PSDscResources, powershell-yaml
 
 jobs:
@@ -86,20 +85,11 @@ jobs:
           shell: powershell
           modules-to-cache: ${{ env.module_cache }}
 
-      - name: "install pdk"
-        run: |
-          choco feature disable -n=showDownloadProgress
-          choco install pdk --version ${{ env.pdk_version }} -y
+      - name: Install PDK
+        uses: ./.github/actions/install-pdk
 
-      - name: "configure winrm"
-        run: |
-          Write-Host 'Ensuring WinRM is configured for DSC'
-          Get-ChildItem WSMan:\localhost\Listener\ -OutVariable Listeners | Format-List * -Force
-          $HTTPListener = $Listeners | Where-Object -FilterScript { $_.Keys.Contains('Transport=HTTP') }
-          If ($HTTPListener.Count -eq 0) {
-            winrm create winrm/config/Listener?Address=*+Transport=HTTP
-            winrm e winrm/config/listener
-          }
+      - name: Configure WinRM
+        uses: ./.github/actions/configure-winrm
 
       - name: "publish module"
         env:

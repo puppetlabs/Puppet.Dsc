@@ -1,0 +1,16 @@
+---
+name: 'Install PDK'
+description: 'Installs PDK using Chocolatey'
+inputs:
+  pdk_version:
+    description: 'PDK version to install'
+    required: false
+    default: '3.0.1.3'
+runs:
+  using: 'composite'
+  steps:
+    - name: Install PDK
+      run: |
+        choco feature disable -n=showDownloadProgress
+        choco install pdk --version ${{ inputs.pdk_version }} -y
+      shell: powershell
