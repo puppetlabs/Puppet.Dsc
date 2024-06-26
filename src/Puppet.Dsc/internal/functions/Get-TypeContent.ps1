@@ -67,6 +67,11 @@ Puppet::ResourceApi.register_type(
       behaviour: :parameter,
       default:   'property',
     },
+    dsc_timeout: {
+      type:     'Optional[Integer]',
+      desc:     'The maximum time in seconds to wait for the DSC resource to complete.',
+      behaviour: :parameter,
+    },
 $((Get-TypeParameterContent -ParameterInfo $Resource.ParameterInfo) -join "`n")
   },
 )
