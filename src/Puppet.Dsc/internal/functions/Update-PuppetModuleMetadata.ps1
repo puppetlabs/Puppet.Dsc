@@ -89,7 +89,8 @@ function Update-PuppetModuleMetadata {
           '2012',
           '2012R2',
           '2016',
-          '2019'
+          '2019',
+          '2022'
         )
       }
     )

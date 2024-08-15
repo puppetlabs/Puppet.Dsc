@@ -93,6 +93,7 @@ Describe 'Update-PuppetModuleMetadata' -Tag 'Unit' {
           $Result.operatingsystem_support[0].operatingsystemrelease | Should -Contain '2012R2'
           $Result.operatingsystem_support[0].operatingsystemrelease | Should -Contain '2016'
           $Result.operatingsystem_support[0].operatingsystemrelease | Should -Contain '2019'
+          $Result.operatingsystem_support[0].operatingsystemrelease | Should -Contain '2022'
         }
         It 'Updates the Puppet lower bound' {
           $Result.requirements[0].version_requirement | Should -Be '>= 7.0.0 < 9.0.0'
