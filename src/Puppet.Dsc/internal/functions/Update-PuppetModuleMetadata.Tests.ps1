@@ -85,7 +85,7 @@ Describe 'Update-PuppetModuleMetadata' -Tag 'Unit' {
         }
         It 'Updates the dependencies' {
           $Result.dependencies[0].Name | Should -Be 'puppetlabs/pwshlib'
-          $Result.dependencies[0].version_requirement | Should -Be '>= 0.9.0 < 2.0.0'
+          $Result.dependencies[0].version_requirement | Should -Be '>= 1.2.0 < 2.0.0'
         }
         It 'Updates the supported operating system list' {
           $Result.operatingsystem_support[0].operatingsystem | Should -Be 'windows'
