@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [2.1.0](https://github.com/puppetlabs/Puppet.Dsc/tree/2.1.0) - 2024-08-15
+
+[Full Changelog](https://github.com/puppetlabs/Puppet.Dsc/compare/2.0.1...2.1.0)
+
+### Added
+
+- bump required pwshlib to 1.2.0 and greater [#298](https://github.com/puppetlabs/Puppet.Dsc/pull/298) ([jordanbreen28](https://github.com/jordanbreen28))
+- (feat) - Add windows 2022 to modules [#297](https://github.com/puppetlabs/Puppet.Dsc/pull/297) ([jordanbreen28](https://github.com/jordanbreen28))
+- (CAT-1869) - Add dsc_timeout param to all dsc resources [#290](https://github.com/puppetlabs/Puppet.Dsc/pull/290) ([jordanbreen28](https://github.com/jordanbreen28))
+
 ## [2.0.1](https://github.com/puppetlabs/Puppet.Dsc/tree/2.0.1) - 2024-02-12
 
 [Full Changelog](https://github.com/puppetlabs/Puppet.Dsc/compare/2.0.0...2.0.1)
@@ -19,6 +29,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/Puppet.Dsc/compare/1.0.6...2.0.0)
 
 ### Changed
+
 - (CAT-1454) - Add Puppet 8/Drop Puppet 6 [#273](https://github.com/puppetlabs/Puppet.Dsc/pull/273) ([jordanbreen28](https://github.com/jordanbreen28))
 - (CAT-1484) - Add ensurable property to resource [#269](https://github.com/puppetlabs/Puppet.Dsc/pull/269) ([jordanbreen28](https://github.com/jordanbreen28))
 
