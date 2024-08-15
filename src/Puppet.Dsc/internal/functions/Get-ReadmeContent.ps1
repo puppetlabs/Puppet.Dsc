@@ -281,12 +281,14 @@ For specific information on troubleshooting a generated module, check the [troub
 
 ## Known Limitations
 
-Currently, because of the way Puppet caches files on agents, use of the legacy [``puppetlabs-dsc``]($LegacyDscForgePage) module is **not** compatible with this or any auto-generated DSC module.
+* Currently, because of the way Puppet caches files on agents, use of the legacy [``puppetlabs-dsc``]($LegacyDscForgePage) module is **not** compatible with this or any auto-generated DSC module.
 Inclusion of both will lead to pluginsync conflicts.
 
-Right now, if you have the same version of a PowerShell module with class-based DSC Resources in your PSModulePath as vendored in a Puppetized DSC Module,
+* Right now, if you have the same version of a PowerShell module with class-based DSC Resources in your PSModulePath as vendored in a Puppetized DSC Module,
 you cannot use those class-based DSC Resources from inside of Puppet due to a bug in DSC which prevents using a module by path reference instead of name.
 Instead, DSC will see that there are two DSC Resources for the same module and version and then error out.
+
+* When PowerShell [Script Block Logging](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging_windows?view=powershell-7.4#enabling-script-block-logging) is enabled, data marked as sensitive in your manifest may appear in these logs as plain text. It is **highly recommended**, by both Puppet and Microsoft, that you also enable [Protected Event Logging](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging_windows?view=powershell-7.4#protected-event-logging) alongside this to encrypt the logs to protect this information.
 
 ### Configuring the LCM
 
