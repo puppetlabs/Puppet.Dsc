@@ -17,7 +17,7 @@ While the type file tells Puppet what it needs to know about the API surface of 
 When Puppet.Dsc writes a Puppet provider for the DSC Resource, it doesn't actually write many lines of code. This example is for the `PSRepository` DSC Resource from the PowerShellGet module:
 
 ```ruby
-require 'puppet/provider/dsc_base_provider/dsc_base_provider'
+require_relative '../../../../../pwshlib/lib/puppet/provider/dsc_base_provider/dsc_base_provider'
 
 # Implementation for the dsc_type type using the Resource API.
 class Puppet::Provider::DscPsrepository::DscPsrepository < Puppet::Provider::DscBaseProvider
