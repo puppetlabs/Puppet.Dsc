@@ -5,12 +5,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [Unreleased]
+## [2.2.0](https://github.com/puppetlabs/Puppet.Dsc/tree/2.2.0) - 2025-02-26
+
+[Full Changelog](https://github.com/puppetlabs/Puppet.Dsc/compare/2.1.0...2.2.0)
 
 ### Fixed
 
-- Replace require to require_relative. This works around limitations in Puppet Ruby LOAD_PATH
-with error no such file to load -- puppet/provider/dsc_base_provider/dsc_base_provider [Issue #299](https://github.com/puppetlabs/Puppet.Dsc/issues/299)
+- Fix autoload issue by replacing require to require_relative [#308](https://github.com/puppetlabs/Puppet.Dsc/pull/308) ([webalexeu](https://github.com/webalexeu))
 
 ## [2.1.0](https://github.com/puppetlabs/Puppet.Dsc/tree/2.1.0) - 2024-08-15
 
@@ -18,8 +19,14 @@ with error no such file to load -- puppet/provider/dsc_base_provider/dsc_base_pr
 
 ### Added
 
-- bump required pwshlib to 1.2.0 and greater [#298](https://github.com/puppetlabs/Puppet.Dsc/pull/298) ([jordanbreen28](https://github.com/jordanbreen28))
 - (feat) - Add windows 2022 to modules [#297](https://github.com/puppetlabs/Puppet.Dsc/pull/297) ([jordanbreen28](https://github.com/jordanbreen28))
+
+### Fixed
+
+- bump required pwshlib to 1.2.0 and greater [#298](https://github.com/puppetlabs/Puppet.Dsc/pull/298) ([jordanbreen28](https://github.com/jordanbreen28))
+
+### Other
+
 - (CAT-1869) - Add dsc_timeout param to all dsc resources [#290](https://github.com/puppetlabs/Puppet.Dsc/pull/290) ([jordanbreen28](https://github.com/jordanbreen28))
 
 ## [2.0.1](https://github.com/puppetlabs/Puppet.Dsc/tree/2.0.1) - 2024-02-12
