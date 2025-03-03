@@ -40,7 +40,7 @@ Describe 'Get-DscResourceParameterInfoByCimClass' -Skip:(!$RunningElevated) -Tag
         # We cannot effectively mock out the underlying object, so we need to retrieve a
         # well-known DSC resource at a specific version
         $CimfulDscResource = Get-DscResource -Name NTFSAccessEntry -Module @{
-          ModuleName    = 'AccessControlDSC'
+          ModuleName    = 'AccessControlList'
           ModuleVersion = '1.4.0.0'
         }
         $CimfulParametersToInspect = Get-DscResourceParameterInfoByCimClass -DscResource $CimfulDscResource |
