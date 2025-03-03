@@ -26,7 +26,7 @@ jobs:
           fetch-depth: 0
 
       - name: "install modules"
-        uses: potatoqualitee/psmodulecache@v6.0
+        uses: potatoqualitee/psmodulecache@v6.2.1
         with:
           shell: powershell
           modules-to-cache: ${{ env.module_cache }}
