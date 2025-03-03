@@ -33,7 +33,7 @@ jobs:
         uses: potatoqualitee/psmodulecache@v6.2.1
         with:
           shell: powershell
-          modules-to-cache: PSFramework, PSDscResources, PnP.PowerShell:1.11.0
+          modules-to-cache: PSFramework, PSDscResources, powershell-yaml, PnP.PowerShell:1.11.0
           modules-to-cache-prerelease: PnP.PowerShell
 
       - name: Configure WinRM
@@ -69,7 +69,7 @@ jobs:
         uses: potatoqualitee/psmodulecache@v6.2.1
         with:
           shell: powershell
-          modules-to-cache: PSFramework, PSDscResources, PnP.PowerShell:1.11.0
+          modules-to-cache: PSFramework, PSDscResources, powershell-yaml, PnP.PowerShell:1.11.0
           modules-to-cache-prerelease: PnP.PowerShell
           updatable: true
 
