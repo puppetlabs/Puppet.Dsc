@@ -7,9 +7,9 @@ on:
 env:
   module_cache: PSFramework, PSDscResources, AccessControlDSC, powershell-yaml, PSScriptAnalyzer
 
-defaults:
-  run:
-    shell: powershell
+# defaults:
+#   run:
+#     shell: powershell
 
 jobs:
   spec:

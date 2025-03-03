@@ -13,9 +13,9 @@ env:
   COVERAGE_ENABLED: 'yes'
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-defaults:
-  run:
-    shell: powershell
+# defaults:
+#   run:
+#     shell: powershell
 
 jobs:
   spec:
@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2019, windows-2022]
+        os: [indows-2019, windows-2022, windows-latest]
         tag: [General, Unit]
         include:
           - tag: General
@@ -67,7 +67,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2019, windows-2022]
+        os: [windows-2019, windows-2022, windows-latest]
         tag: [Basic]
         pwshlib_source: [forge, git]
         include:
