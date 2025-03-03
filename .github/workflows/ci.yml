@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "install modules"
-        uses: potatoqualitee/psmodulecache@v6.2
+        uses: potatoqualitee/psmodulecache@v6.0
         with:
           shell: powershell
           modules-to-cache: ${{ env.module_cache }}
@@ -84,7 +84,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "install modules"
-        uses: potatoqualitee/psmodulecache@v6.2
+        uses: potatoqualitee/psmodulecache@v6.0
         with:
           shell: powershell
           modules-to-cache: ${{ env.module_cache }}
