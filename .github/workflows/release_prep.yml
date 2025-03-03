@@ -29,7 +29,7 @@ jobs:
         uses: potatoqualitee/psmodulecache@v6.2.1
         with:
           shell: powershell
-          modules-to-cache: PnP.PowerShell:1.11.0
+          modules-to-cache: PSFramework, PnP.PowerShell:1.11.0
           modules-to-cache-prerelease: PnP.PowerShell
 
 
