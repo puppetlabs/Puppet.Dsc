@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [indows-2019, windows-2022, windows-latest]
+        os: [windows-2019, windows-2022, windows-latest]
         tag: [General, Unit]
         include:
           - tag: General
