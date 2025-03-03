@@ -26,7 +26,7 @@ jobs:
           fetch-depth: 0
 
       - name: "install modules"
-        uses: potatoqualitee/psmodulecache@v6.0
+        uses: potatoqualitee/psmodulecache@v6.1
         with:
           shell: powershell
           modules-to-cache: PSFramework, PSDscResources, powershell-yaml, PSDesiredStateConfiguration,  PnP.PowerShell:1.11.0
