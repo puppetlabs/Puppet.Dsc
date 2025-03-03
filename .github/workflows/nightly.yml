@@ -70,7 +70,7 @@ jobs:
         with:
           shell: powershell
           modules-to-cache: PSFramework, PSDscResources, powershell-yaml, PnP.PowerShell:1.11.0
-          modules-to-cache-prerelease: PnP.PowerShell
+          modules-to-cache-prerelease: PnP.PowerShell, PSDscResources
 
       - name: Install PDK
         uses: ./.github/actions/install-pdk
