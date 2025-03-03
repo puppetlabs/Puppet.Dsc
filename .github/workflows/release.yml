@@ -32,7 +32,7 @@ jobs:
         uses: potatoqualitee/psmodulecache@v6.2.1
         with:
           shell: powershell
-          modules-to-cache: PSFramework, PSDscResources, powershell-yaml, PSDesiredStateConfiguration:1.1, PnP.PowerShell:1.11.0
+          modules-to-cache: PSFramework, PSDscResources, powershell-yaml, PSDesiredStateConfiguration, PnP.PowerShell:1.5.0
           modules-to-cache-prerelease: PnP.PowerShell, PSDscResources, PSDesiredStateConfiguration
 
       - name: "get version"
