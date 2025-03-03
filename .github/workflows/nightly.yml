@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: "checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.0
 
       - name: "install modules"
         uses: potatoqualitee/psmodulecache@v6.2
@@ -63,7 +63,7 @@ jobs:
 
     steps:
       - name: "checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.0
 
       - name: "install modules"
         uses: potatoqualitee/psmodulecache@v6.2
