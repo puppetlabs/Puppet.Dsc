@@ -13,9 +13,9 @@ env:
   COVERAGE_ENABLED: 'yes'
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-defaults:
-  run:
-    shell: powershell
+# defaults:
+#   run:
+#     shell: powershell
 
 jobs:
   spec:
@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2019, windows-2022]
+        os: [windows-2019, windows-2022, windows-latest]
         tag: [General, Unit]
         include:
           - tag: General
@@ -33,13 +33,14 @@ jobs:
 
     steps:
       - name: "checkout"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.0
 
       - name: "install modules"
-        uses: potatoqualitee/psmodulecache@v5.1
+        uses: potatoqualitee/psmodulecache@v6.2.1
         with:
           shell: powershell
-          modules-to-cache: ${{ env.module_cache }}
+          modules-to-cache: PSFramework, PSDscResources, powershell-yaml
+          modules-to-cache-prerelease: PnP.PowerShell, PSDscResources, PSDesiredStateConfiguration
 
       - name: Configure WinRM
         uses: ./.github/actions/configure-winrm
@@ -66,7 +67,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2019, windows-2022]
+        os: [windows-2019, windows-2022, windows-latest]
         tag: [Basic]
         pwshlib_source: [forge, git]
         include:
@@ -81,13 +82,14 @@ jobs:
 
     steps:
       - name: "checkout"
-        uses: actions/checkout@v3
+        uses: actions/checkout@4.1.0
 
       - name: "install modules"
-        uses: potatoqualitee/psmodulecache@v5.1
+        uses: potatoqualitee/psmodulecache@v6.2.1
         with:
           shell: powershell
-          modules-to-cache: ${{ env.module_cache }}
+          modules-to-cache: PSFramework, PSDscResources, powershell-yaml
+          modules-to-cache-prerelease: PnP.PowerShell
 
       - name: Install PDK
         uses: ./.github/actions/install-pdk

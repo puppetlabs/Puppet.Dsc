@@ -22,17 +22,18 @@ jobs:
     steps:
 
       - name: "checkout"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4.1.0"
         with:
           ref: ${{ github.event.inputs.target }}
           clean: true
           fetch-depth: 0
 
       - name: "install modules"
-        uses: potatoqualitee/psmodulecache@v5.1
+        uses: potatoqualitee/psmodulecache@v6.2.1
         with:
           shell: powershell
-          modules-to-cache: ${{ env.module_cache }}
+          modules-to-cache: PSFramework, PSDscResources, powershell-yaml, PSDesiredStateConfiguration, PnP.PowerShell:1.5.0
+          modules-to-cache-prerelease: PnP.PowerShell, PSDscResources, PSDesiredStateConfiguration
 
       - name: "get version"
         id: "get_version"
