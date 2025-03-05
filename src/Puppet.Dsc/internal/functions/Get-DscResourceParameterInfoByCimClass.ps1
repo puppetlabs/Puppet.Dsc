@@ -43,7 +43,7 @@ Function Get-DscResourceParameterInfoByCimClass {
       ForEach ($InstanceType in $EmbeddedInstanceTypes) {
         # Handle credential objects separately as they are well-known constructs
         If ($InstanceType -eq 'MSFT_Credential') {
-          $DefinedEmbeddedInstances.$InstanceType = 'Optional[Struct[{ user => String[1], password => Sensitive[String[1]] }]]'
+          $DefinedEmbeddedInstances.$InstanceType = 'Optional[Struct[{ user => String[1], password => Variant[String[1], Sensitive[String[1]]] }]]'
         } Else {
           # Capture the metadata in order to parse the Puppet type definition and retrieve the cim instance types.
           $EmbeddedInstanceMetadata = @{}
