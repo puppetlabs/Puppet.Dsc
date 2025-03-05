@@ -49,8 +49,11 @@ jobs:
 
       - name: Upload coverage reports to Codecov
         # Only upload report once per CI run
-        if: matrix.os == 'windows-2022' && matrix.tag == 'Unit'
-        uses: codecov/codecov-action@v3
+        if: |
+          matrix.os == 'windows-2022' && 
+          matrix.tag == 'Unit' && 
+          env.CODECOV_TOKEN != ''
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
