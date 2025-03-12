@@ -27,10 +27,10 @@ jobs:
 
     steps:
       - name: "checkout"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: "install modules"
-        uses: potatoqualitee/psmodulecache@v5.1
+        uses: potatoqualitee/psmodulecache@v6.2.1
         with:
           shell: powershell
           modules-to-cache: ${{ env.module_cache }}
@@ -62,10 +62,10 @@ jobs:
 
     steps:
       - name: "checkout"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: "install modules"
-        uses: potatoqualitee/psmodulecache@v5.1
+        uses: potatoqualitee/psmodulecache@v6.2.1
         with:
           shell: powershell
           modules-to-cache: ${{ env.module_cache }}
