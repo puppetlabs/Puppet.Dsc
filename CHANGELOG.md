@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [2.2.1](https://github.com/puppetlabs/Puppet.Dsc/tree/2.2.1) - 2025-03-18
+
+[Full Changelog](https://github.com/puppetlabs/Puppet.Dsc/compare/2.2.0...2.2.1)
+
+### Fixed
+
+- Handle string credentials [#307](https://github.com/puppetlabs/Puppet.Dsc/pull/307) ([Clebam](https://github.com/Clebam))
+
 ## [2.2.0](https://github.com/puppetlabs/Puppet.Dsc/tree/2.2.0) - 2025-02-26
 
 [Full Changelog](https://github.com/puppetlabs/Puppet.Dsc/compare/2.1.0...2.2.0)
