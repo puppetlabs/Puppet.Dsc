@@ -10,8 +10,6 @@ on:
 
 env:
   module_cache: PSFramework, PSDscResources, AccessControlDSC, powershell-yaml, PSScriptAnalyzer
-  COVERAGE_ENABLED: 'yes'
-  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 defaults:
   run:
@@ -46,19 +44,6 @@ jobs:
 
       - name: Run Unit Tests
         uses: ./.github/actions/run-unit-tests
-
-      - name: Upload coverage reports to Codecov
-        # Only upload report once per CI run
-        if: |
-          matrix.os == 'windows-2022' && 
-          matrix.tag == 'Unit' && 
-          env.CODECOV_TOKEN != ''
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage.xml
-          fail_ci_if_error: true
-          verbose: true
 
   acceptance:
     runs-on: ${{ matrix.os }}
