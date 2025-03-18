@@ -44,12 +44,4 @@ If ($null -ne $PwshLibSource) {
   $PesterConfiguration.Run.Path = $TestPath
 }
 
-If ($Tag -eq 'Unit' -and 'yes' -eq $Env:COVERAGE_ENABLED){
-  $PesterConfiguration.CodeCoverage.Enabled = $true
-  $PesterConfiguration.CodeCoverage.Path = @(
-    Resolve-Path -Path "./src/Puppet.Dsc/internal/functions/*.ps1"
-    Resolve-Path -Path "./src/Puppet.Dsc/functions/*.ps1"
-  )
-}
-
 Invoke-Pester -Configuration $PesterConfiguration
