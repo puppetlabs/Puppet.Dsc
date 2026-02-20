@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2019, windows-2022]
+        os: [windows-2022, windows-latest]
         tag: [General, Unit]
         include:
           - tag: General
@@ -51,13 +51,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2019, windows-2022]
+        os: [windows-2022, windows-latest]
         tag: [Basic]
         pwshlib_source: [forge, git]
         include:
           - pwshlib_source: forge
             pwshlib_repo: "puppetlabs/pwshlib"
-            pwshlib_ref: "latest" # Change to a specific version if desired
+            pwshlib_ref: "latest" # Track latest release
             results_file: Acceptance.Forge.Results.xml
           - pwshlib_source: git
             pwshlib_repo: "https://github.com/puppetlabs/ruby-pwsh.git" # Change to another fork if desired
