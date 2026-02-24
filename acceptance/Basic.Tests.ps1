@@ -219,7 +219,7 @@ Describe 'Acceptance Tests: Basic' -Tag @('Acceptance', 'Basic') {
                   '  dsc_network_access_allow_anonymous_sid_name_translation => "Disabled",'
                   "}`n"
                 ) -join "`n"
-                PdkSuccessFilterScript = { $_ -match 'Updating: Finished' }
+                PdkSuccessFilterScript = { $_ -match '(Updating: Finished|Applied catalog in)' }
                 PdkErrorFilterScript   = { $_ -match 'Error' }
               }
               @{
@@ -231,7 +231,7 @@ Describe 'Acceptance Tests: Basic' -Tag @('Acceptance', 'Basic') {
                   '  dsc_network_access_allow_anonymous_sid_name_translation => "Disabled",'
                   "}`n"
                 ) -join "`n"
-                PdkSuccessFilterScript = { $_ -match 'Updating: Finished' }
+                PdkSuccessFilterScript = { $_ -match '(Updating: Finished|Applied catalog in)' }
                 PdkErrorFilterScript   = { $_ -match 'Error' }
               }
               @{
